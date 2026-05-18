@@ -1,8 +1,11 @@
 package jp.co.sss.lms.service;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
@@ -211,13 +214,14 @@ public class StudentAttendanceService {
 	 * @throws ParseException
 	 */
 	public boolean notEnterCheck() throws ParseException {
-		//SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
 		Date trainingDate = attendanceUtil.getTrainingDate();
-		//sdf.format(trainingDate);
+		sdf.format(trainingDate);
 		Integer count = tStudentAttendanceMapper.notEnterCount(loginUserDto.getLmsUserId(), Constants.DB_FLG_FALSE,
 				trainingDate);
 		if (count > 0) {
 			System.out.println("未入力あり");
+			System.out.println(count);
 			return true;
 		} else {
 			return false;
@@ -230,6 +234,8 @@ public class StudentAttendanceService {
 	 * 
 	 * @param attendanceManagementDtoList
 	 * @return 勤怠編集フォーム
+	 *  出勤・退勤時間の入力方法変更
+	 * @author 松浦公彦 - Task.26
 	 */
 	public AttendanceForm setAttendanceForm(
 			List<AttendanceManagementDto> attendanceManagementDtoList) {
@@ -241,6 +247,12 @@ public class StudentAttendanceService {
 		attendanceForm.setLeaveFlg(loginUserDto.getLeaveFlg());
 		attendanceForm.setBlankTimes(attendanceUtil.setBlankTime());
 
+		//Task-26
+		LinkedHashMap<Integer, String> hashMap = new LinkedHashMap<Integer, String>();
+        attendanceForm.		
+        attendanceForm.		
+       	
+        
 		// 途中退校している場合のみ設定
 		if (loginUserDto.getLeaveDate() != null) {
 			attendanceForm
