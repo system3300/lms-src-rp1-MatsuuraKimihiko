@@ -69,7 +69,7 @@ public interface TStudentAttendanceMapper {
 	 * 過去日の未入力チェック
 	 * 
 	 * @author 松浦公彦 - Task.25
-	 * @param msUserId
+	 * @param lmsUserId
 	 * @param deleteFlg
 	 * @param trainingDate
 	 * @return 未入力データの件数

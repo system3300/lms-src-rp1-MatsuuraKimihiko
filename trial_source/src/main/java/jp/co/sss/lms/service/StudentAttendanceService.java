@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
@@ -219,8 +218,7 @@ public class StudentAttendanceService {
 		Integer count = tStudentAttendanceMapper.notEnterCount(loginUserDto.getLmsUserId(), Constants.DB_FLG_FALSE,
 				trainingDate);
 		if (count > 0) {
-			System.out.println("未入力あり");
-			System.out.println(count);
+
 			return true;
 		} else {
 			return false;
@@ -246,23 +244,10 @@ public class StudentAttendanceService {
 		attendanceForm.setLeaveFlg(loginUserDto.getLeaveFlg());
 		attendanceForm.setBlankTimes(attendanceUtil.setBlankTime());
 
-		//Task-26
-		LinkedHashMap<Integer, String> hourMap = new LinkedHashMap<>();
-
-		hourMap.put(null, "");
-		for (int i = 0; i < 12; i++) {
-			hourMap.put(i, String.format("%02d", i));
-		}
-
-		LinkedHashMap<Integer, String> minuteMap = new LinkedHashMap<>();
-
-		minuteMap.put(null, "");
-		for (int i = 0; i < 60; i++) {
-			minuteMap.put(i, String.format("%02d", i));
-		}
+		//Task.26
 
 		attendanceForm.setHourMap(attendanceUtil.getHourMap());
-		attendanceForm.setMinuteMap(attendanceUtil.getMiniteMap());
+		attendanceForm.setMinuteMap(attendanceUtil.getMinuteMap());
 
 		// 途中退校している場合のみ設定
 		if (loginUserDto.getLeaveDate() != null) {
@@ -282,6 +267,12 @@ public class StudentAttendanceService {
 			dailyAttendanceForm
 					.setTrainingStartTime(attendanceManagementDto.getTrainingStartTime());
 			dailyAttendanceForm.setTrainingEndTime(attendanceManagementDto.getTrainingEndTime());
+
+			//Task.26
+			dailyAttendanceForm
+					.setTrainingStartTime(attendanceManagementDto.getTrainingStartTime());
+			dailyAttendanceForm.setTrainingStartTime(attendanceManagementDto.gettr);
+
 			if (attendanceManagementDto.getBlankTime() != null) {
 				dailyAttendanceForm.setBlankTime(attendanceManagementDto.getBlankTime());
 				dailyAttendanceForm.setBlankTimeValue(String.valueOf(
