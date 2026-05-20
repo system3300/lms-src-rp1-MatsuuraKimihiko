@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -248,11 +247,23 @@ public class StudentAttendanceService {
 		attendanceForm.setBlankTimes(attendanceUtil.setBlankTime());
 
 		//Task-26
-		LinkedHashMap<Integer, String> hashMap = new LinkedHashMap<Integer, String>();
-        attendanceForm.		
-        attendanceForm.		
-       	
-        
+		LinkedHashMap<Integer, String> hourMap = new LinkedHashMap<>();
+
+		hourMap.put(null, "");
+		for (int i = 0; i < 12; i++) {
+			hourMap.put(i, String.format("%02d", i));
+		}
+
+		LinkedHashMap<Integer, String> minuteMap = new LinkedHashMap<>();
+
+		minuteMap.put(null, "");
+		for (int i = 0; i < 60; i++) {
+			minuteMap.put(i, String.format("%02d", i));
+		}
+
+		attendanceForm.setHourMap(attendanceUtil.getHourMap());
+		attendanceForm.setMinuteMap(attendanceUtil.getMiniteMap());
+
 		// 途中退校している場合のみ設定
 		if (loginUserDto.getLeaveDate() != null) {
 			attendanceForm
