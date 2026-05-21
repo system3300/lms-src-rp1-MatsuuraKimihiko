@@ -152,7 +152,7 @@ public class AttendanceUtil {
 		LinkedHashMap<Integer, String> hourMap = new LinkedHashMap<>();
 
 		hourMap.put(null, "");
-		for (int i = 0; i <= 12; i++) {
+		for (int i = 0; i < 24; i++) {
 			hourMap.put(i, String.format("%02d", i));
 		}
 		return hourMap;
@@ -167,5 +167,47 @@ public class AttendanceUtil {
 		}
 		return minuteMap;
 
+	}
+
+	// Task.26
+
+	public Integer getStartHour(String trainingStartTime) {
+		if (trainingStartTime == null || trainingStartTime.length() < 2) {
+			return null;
+		}
+
+		String timeString = trainingStartTime;
+		Integer startHour = Integer.parseInt(timeString.substring(0, 2));
+		return startHour;
+	}
+
+	public Integer getStartMinute(String trainingStartTime) {
+		if (trainingStartTime == null || trainingStartTime.length() < 5) {
+			return null;
+		}
+
+		String timeString = trainingStartTime;
+		Integer startMinute = Integer.parseInt(timeString.substring(3, 5));
+		return startMinute;
+	}
+
+	public Integer getEndHour(String trainingEndTime) {
+		if (trainingEndTime == null || trainingEndTime.length() < 5) {
+			return null;
+		}
+
+		String timeString = trainingEndTime;
+		Integer endHour = Integer.parseInt(timeString.substring(0, 2));
+		return endHour;
+	}
+
+	public Integer getEndMinute(String trainingEndTime) {
+		if (trainingEndTime == null || trainingEndTime.length() < 5) {
+			return null;
+		}
+
+		String timeString = trainingEndTime;
+		Integer endMinute = Integer.parseInt(timeString.substring(3, 5));
+		return endMinute;
 	}
 }

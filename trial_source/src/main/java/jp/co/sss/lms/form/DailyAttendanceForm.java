@@ -47,4 +47,10 @@ public class DailyAttendanceForm {
 	/** インデックス */
 	private String index;
 
+	//Task.26
+
+	private Integer trainingStartTimeHour;
+	private Integer trainingStartTimeMinute;
+	private Integer trainingEndTimeHour;
+	private Integer trainingEndTimeMinute;
 }

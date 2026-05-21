@@ -269,9 +269,17 @@ public class StudentAttendanceService {
 			dailyAttendanceForm.setTrainingEndTime(attendanceManagementDto.getTrainingEndTime());
 
 			//Task.26
-			dailyAttendanceForm
-					.setTrainingStartTime(attendanceManagementDto.getTrainingStartTime());
-			dailyAttendanceForm.setTrainingStartTime(attendanceManagementDto.gettr);
+			dailyAttendanceForm.setTrainingStartTimeHour(
+					attendanceUtil.getStartHour(attendanceManagementDto.getTrainingStartTime()));
+
+			dailyAttendanceForm.setTrainingStartTimeMinute(
+					attendanceUtil.getStartMinute(attendanceManagementDto.getTrainingStartTime()));
+
+			dailyAttendanceForm.setTrainingEndTimeHour(
+					attendanceUtil.getEndHour(attendanceManagementDto.getTrainingEndTime()));
+
+			dailyAttendanceForm.setTrainingEndTimeMinute(
+					attendanceUtil.getEndMinute(attendanceManagementDto.getTrainingEndTime()));
 
 			if (attendanceManagementDto.getBlankTime() != null) {
 				dailyAttendanceForm.setBlankTime(attendanceManagementDto.getBlankTime());
@@ -369,4 +377,23 @@ public class StudentAttendanceService {
 		return messageUtil.getMessage(Constants.PROP_KEY_ATTENDANCE_UPDATE_NOTICE);
 	}
 
+	// @author 松浦公彦 - Task.26
+	public void formatConversion(AttendanceForm attendanceForm) {
+		for (DailyAttendanceForm dailyAttendanceForm : attendanceForm.getAttendanceList()) {
+			if (dailyAttendanceForm.getTrainingStartTimeHour() != null
+					&& dailyAttendanceForm.getTrainingStartTimeMinute() != null) {
+				String startTime = String.format("%02d:%02d",
+						dailyAttendanceForm.getTrainingStartTimeHour(),
+						dailyAttendanceForm.getTrainingStartTimeMinute());
+				dailyAttendanceForm.setTrainingStartTime(startTime);
+			}
+			if (dailyAttendanceForm.getTrainingEndTimeHour() != null
+					&& dailyAttendanceForm.getTrainingEndTimeMinute() != null) {
+				String endTime = String.format("%02d:%02d",
+						dailyAttendanceForm.getTrainingEndTimeHour(),
+						dailyAttendanceForm.getTrainingEndTimeMinute());
+				dailyAttendanceForm.setTrainingEndTime(endTime);
+			}
+		}
+	}
 }
