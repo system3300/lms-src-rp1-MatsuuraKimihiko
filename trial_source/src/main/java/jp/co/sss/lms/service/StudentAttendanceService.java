@@ -244,7 +244,7 @@ public class StudentAttendanceService {
 		attendanceForm.setLeaveFlg(loginUserDto.getLeaveFlg());
 		attendanceForm.setBlankTimes(attendanceUtil.setBlankTime());
 
-		//Task.26
+		//松浦公彦 -Task.26
 
 		attendanceForm.setHourMap(attendanceUtil.getHourMap());
 		attendanceForm.setMinuteMap(attendanceUtil.getMinuteMap());

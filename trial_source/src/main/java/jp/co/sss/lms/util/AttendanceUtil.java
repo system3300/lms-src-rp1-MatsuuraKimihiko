@@ -147,7 +147,9 @@ public class AttendanceUtil {
 		return false;
 	}
 
-	//Task.26-
+	/* @return 時間・分マップ
+	 * @author 松浦公彦 -Task.26
+	 */
 	public LinkedHashMap<Integer, String> getHourMap() {
 		LinkedHashMap<Integer, String> hourMap = new LinkedHashMap<>();
 
@@ -169,8 +171,14 @@ public class AttendanceUtil {
 
 	}
 
-	// Task.26
-
+	/*
+	 * @param startHour 開始時刻(時)
+	 * @param startMinute 開始時刻(分)	
+	 * @param endHour   終了時刻(時)
+	 * @param endMinute 終了時刻(分)
+	 * @return 出勤・退勤時間
+	 * @author 松浦公彦 -Task.26
+	  */
 	public Integer getStartHour(String trainingStartTime) {
 		if (trainingStartTime == null || trainingStartTime.length() < 2) {
 			return null;
