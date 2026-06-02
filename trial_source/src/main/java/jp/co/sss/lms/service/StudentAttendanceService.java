@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 import jp.co.sss.lms.dto.AttendanceManagementDto;
 import jp.co.sss.lms.dto.LoginUserDto;
@@ -395,5 +396,114 @@ public class StudentAttendanceService {
 				dailyAttendanceForm.setTrainingEndTime(endTime);
 			}
 		}
+	}
+
+	// @author 松浦公彦 - Task.27
+	public void updateInputCheck(AttendanceForm attendanceForm, BindingResult result) {
+
+		for (int i = 0; i < attendanceForm.getAttendanceList().size(); i++) {
+
+			DailyAttendanceForm dailyAttendanceForm = attendanceForm.getAttendanceList().get(i);
+
+			// a. 備考100文字超過
+			if (dailyAttendanceForm.getNote() != null && dailyAttendanceForm.getNote().length() > 100) {
+				result.rejectValue(
+						"attendanceList[" + i + "].note",
+						"maxlength",
+						new Object[] { "備考", "100" },
+						null);
+			}
+
+			Integer startHour = dailyAttendanceForm.getTrainingStartTimeHour();
+			Integer startMin = dailyAttendanceForm.getTrainingStartTimeMinute();
+			Integer endHour = dailyAttendanceForm.getTrainingEndTimeHour();
+			Integer endMin = dailyAttendanceForm.getTrainingEndTimeMinute();
+
+			boolean startHourInput = startHour != null;
+			boolean startMinInput = startMin != null;
+			boolean endHourInput = endHour != null;
+			boolean endMinInput = endMin != null;
+
+			// b. 出勤時間の時・分どちらかのみ入力
+			if (startHourInput && !startMinInput) {
+				result.rejectValue(
+						"attendanceList[" + i + "].trainingStartTimeMinute",
+						"input.invalid",
+						new Object[] { "出勤時間" },
+						null);
+			}
+
+			if (!startHourInput && startMinInput) {
+				result.rejectValue(
+						"attendanceList[" + i + "].trainingStartTimeHour",
+						"input.invalid",
+						new Object[] { "出勤時間" },
+						null);
+			}
+
+			// c. 退勤時間の時・分どちらかのみ入力
+			if (endHourInput && !endMinInput) {
+
+				result.rejectValue(
+						"attendanceList[" + i + "].trainingEndTimeMinute",
+						"input.invalid",
+						new Object[] { "退勤時間" },
+						null);
+			}
+
+			if (!endHourInput && endMinInput) {
+
+				result.rejectValue(
+						"attendanceList[" + i + "].trainingEndTimeHour",
+						"input.invalid",
+						new Object[] { "退勤時間" },
+						null);
+			}
+			// d. 出勤時間なし・退勤時間あり
+			boolean startInput = startHourInput && startMinInput;
+			boolean endInput = endHourInput && endMinInput;
+
+			if (!startHourInput
+					&& !startMinInput
+					&& endInput) {
+
+				if (!startHourInput) {
+					result.rejectValue(
+							"attendanceList[" + i + "].trainingStartTimeHour",
+							"attendance.punchInEmpty");
+				}
+
+				if (!startMinInput) {
+					result.rejectValue(
+							"attendanceList[" + i + "].trainingStartTimeMinute",
+							"attendance.punchInEmpty");
+				}
+			}
+
+			// e, f は時刻が正しく入力されている場合のみ実施
+			if (startInput && endInput) {
+
+				int startTime = startHour * 60 + startMin;
+				int endTime = endHour * 60 + endMin;
+				// e. 出勤時間 > 退勤時間
+				if (startTime > endTime) {
+					result.rejectValue(
+							"attendanceList[" + i + "].trainingEndTimeHour",
+							"attendance.trainingTimeRange",
+							new Object[] { i + 1 },
+							null);
+				}
+				// f. 休憩時間 > 勤務時間
+				if (dailyAttendanceForm.getBlankTime() != null
+						&& dailyAttendanceForm.getBlankTime() > (endTime - startTime)) {
+
+					result.rejectValue(
+							"attendanceList[" + i + "].blankTime",
+							"attendance.blankTimeError");
+				}
+			}
+
+		}
+
 	}
 }
