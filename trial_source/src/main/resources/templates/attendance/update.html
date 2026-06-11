@@ -31,13 +31,13 @@
 			<form th:action="@{/attendance/update}"
 			      method="post"
 			      th:object="${attendanceForm}">
-				  <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
-				  	    <ul style="margin-bottom:0;">
-				  	        <li th:each="err : ${#fields.errors('*')}"
-				  	            th:text="${err}">
-				  	        </li>
-				  	    </ul>
-				  	</div>
+				  <div th:if="${#fields.hasErrors('*')}">
+				      <ul style="margin-bottom:0;color:#d9534f;">
+				          <li th:each="err : ${#fields.errors('*')}"
+				              th:text="${err}">
+				          </li>
+				      </ul>
+				  </div>
 				  <table class="table table-hover dataTable no-footer">
 					<!--Task.26 -松浦公彦- -->
 					<thead>
@@ -171,12 +171,11 @@
 
 	</script>
 	<script>
-	function butotnClick(){
-	    let check = confirm('更新します。よろしいですか？');
-	}
-
-	let button = document.getElementById('mybtn');
-	button.addEventListener('click', butotnClick);
+		document.getElementById('mybtn').addEventListener('click', function(event) {
+		    if (!confirm('更新します。よろしいですか？')) {
+		        event.preventDefault();
+		    }
+		});
 	</script>
 
 </body>

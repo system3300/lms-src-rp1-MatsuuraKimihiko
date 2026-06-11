@@ -1,12 +1,14 @@
 package jp.co.sss.lms.service;
 
 import java.text.ParseException;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jp.co.sss.lms.dto.CourseDto;
 import jp.co.sss.lms.dto.CourseServiceCourseDto;
 import jp.co.sss.lms.mapper.MCourseMapper;
 import jp.co.sss.lms.util.Constants;
@@ -65,4 +67,8 @@ public class CourseService {
 
 	}
 
+	//Task.57
+	public List<CourseDto> getCourseDto() {
+		return mCourseMapper.getCourseDto();
+	}
 }

@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,11 +12,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import jp.co.sss.lms.dto.AttendanceManagementDto;
+import jp.co.sss.lms.dto.AttendanceStudentDto;
 import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.form.AttendanceForm;
+import jp.co.sss.lms.form.AttendanceStudentListForm;
+import jp.co.sss.lms.service.CompanyService;
+import jp.co.sss.lms.service.CourseService;
 import jp.co.sss.lms.service.StudentAttendanceService;
 import jp.co.sss.lms.util.AttendanceUtil;
 import jp.co.sss.lms.util.Constants;
+import jp.co.sss.lms.util.LoginUserUtil;
 
 /**
  * 勤怠管理コントローラ
@@ -30,6 +36,18 @@ public class AttendanceController {
 	private StudentAttendanceService studentAttendanceService;
 	@Autowired
 	private LoginUserDto loginUserDto;
+
+	@Autowired
+	private LoginUserUtil loginUserUtil;
+
+	@Autowired
+	private CourseService courseService;
+
+	@Autowired
+	private CompanyService companyService;
+
+	@Value("${setting.search.pastTimeLabel}")
+	private String pastTimeLabel;
 
 	/**
 	 * 勤怠管理画面 初期表示
@@ -166,4 +184,101 @@ public class AttendanceController {
 		return "attendance/detail";
 	}
 
+	// Task.57
+	@RequestMapping(path = "/list", method = RequestMethod.GET)
+	public String list(
+			AttendanceStudentListForm attendanceStudentListForm,
+			Model model) {
+
+		List<AttendanceStudentDto> attendanceStudentDtoList = studentAttendanceService.getAttendanceStudentList(
+				attendanceStudentListForm.getCourseId(),
+				attendanceStudentListForm.getCompanyId(),
+				attendanceStudentListForm.getUserName(),
+				attendanceStudentListForm.getPastFlg());
+
+		// Task.57 未入力チェック
+		for (AttendanceStudentDto dto : attendanceStudentDtoList) {
+
+			int count = studentAttendanceService.checkNotEnter(
+					dto.getLmsUserId());
+
+			dto.setNotEnterFlg(count > 0);
+		}
+
+		model.addAttribute("companyList",
+				companyService.getCompanyDto());
+
+		model.addAttribute("courseList",
+				courseService.getCourseDto());
+
+		model.addAttribute(
+				"placeName",
+				loginUserDto.getPlaceName());
+
+		model.addAttribute("pastTimeLabel", pastTimeLabel);
+
+		model.addAttribute("isTeacher", loginUserUtil.isTeacher());
+
+		model.addAttribute("isCompany", loginUserUtil.isCompany());
+
+		model.addAttribute(
+				"studentList",
+				attendanceStudentDtoList);
+
+		model.addAttribute(
+				"attendanceStudentListForm",
+				attendanceStudentListForm);
+
+		return "attendance/list";
+	}
+
+	// Task.57
+	@RequestMapping(path = "/list", params = "search", method = RequestMethod.POST)
+	public String search(
+			AttendanceStudentListForm attendanceStudentListForm,
+			Model model) {
+		System.out.println("pastFlg=" + attendanceStudentListForm.getPastFlg());
+		//検索時の処理
+
+		List<AttendanceStudentDto> attendanceStudentDtoList = studentAttendanceService.getAttendanceStudentList(
+				attendanceStudentListForm.getCourseId(),
+				attendanceStudentListForm.getCompanyId(),
+				attendanceStudentListForm.getUserName(),
+				attendanceStudentListForm.getPastFlg());
+
+		// Task.57 未入力チェック
+		for (AttendanceStudentDto dto : attendanceStudentDtoList) {
+
+			int count = studentAttendanceService.checkNotEnter(
+					dto.getLmsUserId());
+
+			dto.setNotEnterFlg(count > 0);
+		}
+
+		model.addAttribute("companyList",
+				companyService.getCompanyDto());
+
+		model.addAttribute("courseList",
+				courseService.getCourseDto());
+
+		model.addAttribute(
+				"placeName",
+				loginUserDto.getPlaceName());
+
+		model.addAttribute("pastTimeLabel", pastTimeLabel);
+
+		model.addAttribute("isTeacher", loginUserUtil.isTeacher());
+
+		model.addAttribute("isCompany", loginUserUtil.isCompany());
+
+		model.addAttribute(
+				"studentList",
+				attendanceStudentDtoList);
+
+		model.addAttribute(
+				"attendanceStudentListForm",
+				attendanceStudentListForm);
+
+		return "attendance/list";
+	}
 }

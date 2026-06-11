@@ -3,20 +3,24 @@ package jp.co.sss.lms.service;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
 import jp.co.sss.lms.dto.AttendanceManagementDto;
+import jp.co.sss.lms.dto.AttendanceStudentDto;
 import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.entity.TStudentAttendance;
 import jp.co.sss.lms.enums.AttendanceStatusEnum;
 import jp.co.sss.lms.form.AttendanceForm;
 import jp.co.sss.lms.form.DailyAttendanceForm;
+import jp.co.sss.lms.mapper.MLmsUserMapper;
 import jp.co.sss.lms.mapper.TStudentAttendanceMapper;
 import jp.co.sss.lms.util.AttendanceUtil;
 import jp.co.sss.lms.util.Constants;
@@ -45,6 +49,12 @@ public class StudentAttendanceService {
 	private LoginUserDto loginUserDto;
 	@Autowired
 	private TStudentAttendanceMapper tStudentAttendanceMapper;
+
+	@Autowired
+	private MLmsUserMapper mLmsUserMapper;
+
+	@Value("${setting.search.pastTime}")
+	private Integer pastTime;
 
 	/**
 	 * 勤怠一覧情報取得
@@ -467,17 +477,9 @@ public class StudentAttendanceService {
 					&& !startMinInput
 					&& endInput) {
 
-				if (!startHourInput) {
-					result.rejectValue(
-							"attendanceList[" + i + "].trainingStartTimeHour",
-							"attendance.punchInEmpty");
-				}
-
-				if (!startMinInput) {
-					result.rejectValue(
-							"attendanceList[" + i + "].trainingStartTimeMinute",
-							"attendance.punchInEmpty");
-				}
+				result.rejectValue(
+						"attendanceList[" + i + "].trainingStartTimeHour",
+						"attendance.punchInEmpty");
 			}
 
 			// e, f は時刻が正しく入力されている場合のみ実施
@@ -505,5 +507,80 @@ public class StudentAttendanceService {
 
 		}
 
+	}
+
+	//Task.57
+	public List<AttendanceStudentDto> getAttendanceStudentList(
+			Integer courseId,
+			Integer companyId,
+			String userName,
+			Integer pastFlg) {
+
+		// 講師以外は取得不可
+		if (loginUserUtil.isTeacher()) {
+
+			// 未指定ならログインユーザーの会場IDを利用
+			Integer placeId = loginUserDto.getPlaceId();
+
+			List<AttendanceStudentDto> list = mLmsUserMapper.getAttendanceStudentList(
+					courseId,
+					companyId,
+					userName,
+					placeId,
+					Constants.DB_FLG_FALSE);
+
+			for (AttendanceStudentDto dto : list) {
+				dto.setNotEnterCount(
+						checkNotEnter(dto.getLmsUserId()));
+				dto.setNotEnterFlg(
+						checkNotEnter(dto.getLmsUserId()) > 0);
+			}
+
+			return list;
+		}
+
+		else if (loginUserUtil.isCompany()) {
+
+			companyId = loginUserDto.getCompanyId();
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.MONTH, -pastTime);
+			Date limitDate = cal.getTime();
+
+			if (Integer.valueOf(1).equals(pastFlg)) {
+				return mLmsUserMapper.getAttendanceStudentListCompanyAll(
+						companyId,
+						userName,
+						pastFlg);
+
+			} else {
+				pastFlg = 0;
+				return mLmsUserMapper.getAttendanceStudentListCompany(
+						companyId,
+						userName,
+						pastFlg,
+						limitDate);
+			}
+		} else {
+			return new ArrayList<>();
+
+		}
+	}
+
+	/**
+	 * 過去日の勤怠未入力件数取得
+	 *
+	 * @param lmsUserId LMSユーザーID
+	 * @return 未入力件数
+	 */
+	public int checkNotEnter(Integer lmsUserId) {
+
+		Date trainingDate = attendanceUtil.getTrainingDate();
+
+		Integer count = tStudentAttendanceMapper.notEnterCountByLmsUserId(
+				lmsUserId,
+				Constants.DB_FLG_FALSE,
+				trainingDate);
+
+		return count == null ? 0 : count;
 	}
 }
