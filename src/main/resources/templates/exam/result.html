@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	th:replace="~{/common/layout :: layout(~{::title},~{::body/content()})}">
+<head>
+<meta charset="UTF-8">
+<title>[[${examResultDetailDto.examName}]] | LMS</title>
+</head>
+<body>
+
+	<div id="examBeing">
+
+		<h2 th:object="${examResultDetailDto}">
+			[[*{examName}]] <small> あなたのスコア：[[*{#numbers.formatDecimal(point, 1, 1)}]]点</small>
+		</h2>
+
+		<div th:each="questionDto, st1 : ${examResultDetailDto.questionDtoList}" th:object="${questionDto}" class="panel panel-default">
+			<div class="panel-heading">第[[${st1.count}]]問&nbsp;【[[*{genreDetailName}]]】</div>
+			<div class="panel-body">
+				<p class="question marginB5">[[*{question}]]</p>
+				<h6>回答</h6>
+				<ul class="list-group">
+					<th:block th:each="answer, st2 : *{answerList}">
+						<th:block th:if="${st2.count} == *{reply}">
+							<li th:if="*{reply == answerNum}" class="list-group-item list-group-item-info">
+								[[${st2.count}]]. <span class="ib question">[[${answer}]]</span>
+							</li>
+							<li th:if="*{reply != answerNum}" class="list-group-item list-group-item-danger">
+								[[${st2.count}]]. <span class="ib question">[[${answer}]]</span>
+							</li>
+						</th:block>
+						<th:block th:if="${st2.count} != *{reply}">
+							<li class="list-group-item">[[${st2.count}]]. <span class="ib question">[[${answer}]]</span></li>
+						</th:block>
+					</th:block>
+				</ul>
+				<h3 th:if="*{reply == answerNum}">【正解】</h3>
+				<th:block  th:unless="*{reply == answerNum}">
+					<h3>【不正解】
+						<small th:if="${session.loginUserDto.role != '0001'}">正解は *{answerNum} です</small>
+					</h3>
+					<ul class="list-group">
+						<li class="list-group-item">[[*{explain}]]</li>
+					</ul>
+				</th:block>
+			</div>
+		</div>
+
+		<div class="well bs-component">
+			<fieldset>
+				<form th:action="@{/exam/start}" class="alignC" th:method="post" th:object="${examQuestionForm}">
+					<input type="submit" value="戻る" class="btn btn-primary" />
+					<input type="hidden" th:name="examId" th:value="*{examId}" />
+					<input type="hidden" th:name="sectionId" th:value="*{sectionId}" />
+					<input type="hidden" th:name="examSectionId" th:value="*{examSectionId}" />
+				</form>
+			</fieldset>
+		</div>
+
+	</div>
+
+</body>
+</html>

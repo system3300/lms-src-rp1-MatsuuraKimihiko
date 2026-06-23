@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.co.sss.lms.mapper.TSectionDailyReportMapper">
+
+	<select id="getSectionServiceDailyReportDto" resultType="jp.co.sss.lms.dto.SectionServiceDailyReportDto">
+	SELECT
+		t1.daily_report_id,
+		t4.daily_report_submit_id,
+		t3.report_name,
+		t2.date
+	FROM t_section_daily_report t1
+		LEFT OUTER JOIN m_section t2 ON t2.section_id = t1.section_id
+		LEFT OUTER JOIN m_daily_report t3 ON t3.daily_report_id = t1.daily_report_id
+		LEFT OUTER JOIN t_daily_report_submit t4 ON t4.date = t2.date 
+			AND t4.lms_user_id = #{lmsUserId} AND t4.daily_report_id = t3.daily_report_id
+	WHERE t1.section_id = #{sectionId} 
+		AND t1.delete_flg = #{deleteFlg}
+	</select>
+
+	<resultMap type="jp.co.sss.lms.dto.DailyReportDto" id="courseDailyReport">
+		<id column="daily_report_id" property="dailyReportId" />
+		<result column="daily_report_submit_id" property="dailyReportSubmitId" />
+		<result column="report_name" property="reportName" />
+		<result column="file_name" property="fileName" />
+		<result column="sheet_name" property="sheetName" />
+		<result column="row_company" property="rowCompany" />
+		<result column="clm_company" property="clmCompany" />
+		<result column="row_user" property="rowUser" />
+		<result column="clm_user" property="clmUser" />
+		<result column="row_date" property="rowDate" />
+		<result column="clm_date" property="clmDate" />
+		<result column="intelligibility_flg" property="intelligibilityFlg" />
+		<result column="intelligibility_field_num" property="intelligibilityFieldNum" />
+		<result column="intelligibility_num" property="intelligibilityNum" />
+		<result column="row_intel_fld" property="rowIntelFld" />
+		<result column="clm_intel_fld" property="clmIntelFld" />
+		<result column="row_intel" property="rowIntel" />
+		<result column="clm_intel" property="clmIntel" />
+		<result column="date" property="date" />
+		<result column="delete_flg" property="deleteFlg" />
+		<collection property="dailyReportDetailDtoList" ofType="jp.co.sss.lms.dto.DailyReportDetailDto">
+			<result column="daily_report_submit_id" property="dailyReportSubmitId" />
+			<result column="field_num" property="fieldNum" />
+			<result column="field_name" property="fieldName" />
+			<result column="row" property="row" />
+			<result column="clm" property="clm" />
+			<result column="required_flg" property="requiredFlg" />
+			<result column="input_type" property="inputType" />
+			<result column="range_from" property="rangeFrom" />
+			<result column="range_to" property="rangeTo" />
+			<result column="content" property="content" />
+		</collection>
+		<collection property="intelligibilityDtoList" ofType="jp.co.sss.lms.dto.IntelligibilityDto">
+			<result column="intelligibility_id" property="intelligibilityId" />
+			<result column="daily_report_submit_id" property="dailyReportSubmitId" />
+			<result column="intelligibility_field_num" property="fieldNum" />
+			<result column="intelligibility_field_name" property="fieldName" />
+			<result column="intelligibility_field_value" property="fieldValue" />
+		</collection>
+	</resultMap>
+	<select id="getDailyReportDto" resultMap="courseDailyReport">
+		SELECT
+			t1.daily_report_id,
+			t2.report_name,
+			t2.file_name,
+			t2.sheet_name,
+			t2.row_company,
+			t2.clm_company,
+			t2.row_user,
+			t2.clm_user,
+			t2.row_date,
+			t2.clm_date,
+			t2.intelligibility_flg,
+			t2.intelligibility_field_num,
+			t2.intelligibility_num,
+			t2.row_intel_fld,
+			t2.clm_intel_fld,
+			t2.row_intel,
+			t2.clm_intel,
+			t2.delete_flg,
+			t3.field_num,
+			t3.field_name,
+			t3.row,
+			t3.clm,
+			t3.input_type,
+			t3.required_flg,
+			t3.range_from,
+			t3.range_to,
+			t4.daily_report_submit_id,
+			t4.date,
+			t5.content,
+			t8.user_name,
+			t6.intelligibility_id,
+			t6.daily_report_submit_id,
+			t6.field_num AS intelligibility_field_num,
+			t6.field_name AS intelligibility_field_name,
+			t6.field_value AS intelligibility_field_value
+		FROM t_section_daily_report t1
+			INNER JOIN m_daily_report t2 ON t1.daily_report_id = t2.daily_report_id
+			INNER JOIN m_daily_report_detail t3 ON t3.daily_report_id = t2.daily_report_id
+			LEFT OUTER JOIN t_daily_report_submit t4 ON t4.daily_report_id = t1.daily_report_id AND t4.lms_user_id = #{lmsUserId} AND t4.date = #{date}
+			LEFT OUTER JOIN t_daily_report_submit_detail t5 ON t5.daily_report_submit_id = t4.daily_report_submit_id AND t5.field_num = t3.field_num
+			LEFT OUTER JOIN t_intelligibility t6 ON t6.daily_report_submit_id = t4.daily_report_submit_id
+			LEFT OUTER JOIN m_lms_user t7 ON t7.lms_user_id = t4.lms_user_id
+			LEFT OUTER JOIN m_user t8 ON t8.user_id = t7.user_id
+		WHERE t1.daily_report_id = #{dailyReportId} 
+			AND t1.section_id = #{sectionId} 
+			AND t1.account_id = #{accountId} 
+			AND t1.delete_flg = #{deleteFlg}
+		ORDER BY t3.field_num
+	</select>
+
+</mapper>

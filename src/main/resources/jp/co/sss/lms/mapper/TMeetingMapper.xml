@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.co.sss.lms.mapper.TMeetingMapper">
+
+	<resultMap type="jp.co.sss.lms.dto.MeetingDownloadDto" id="meetingDownloadDto">
+		<id column="meeting_id" property="meetingId" />
+		<result column="interview_date" property="interviewDate" />
+		<result column="interviewer" property="interviewer" />
+		<result column="interviewee" property="interviewee" />
+		<result column="company_name" property="companyName" />
+		<result column="meeting_file_id" property="meetingFileId" />
+		<result column="file_name" property="fileName" />
+		<result column="sheet_name" property="sheetName" />
+		<result column="row_company" property="rowCompany" />
+		<result column="clm_company" property="clmCompany" />
+		<result column="row_user" property="rowUser" />
+		<result column="clm_user" property="clmUser" />
+		<result column="row_date" property="rowDate" />
+		<result column="clm_date" property="clmDate" />
+		<result column="row_meeting" property="rowMeeting" />
+		<result column="clm_meeting" property="clmMeeting" />
+		<collection property="meetingDetailDtoList" ofType="jp.co.sss.lms.dto.MeetingDetailDto">
+			<result column="meeting_detail_id" property="meetingDetailId" />
+			<result column="meeting_id" property="meetingId" />
+			<result column="question" property="question" />
+			<result column="answer" property="answer" />
+			<result column="follow" property="follow" />
+			<result column="question_type" property="questionType" />
+		</collection>
+	</resultMap>
+	<select id="getMeetingDownloadDto" resultMap="meetingDownloadDto">
+		SELECT
+			t1.meeting_id,
+			t1.first_create_date AS interview_date,
+            t3.user_name AS interviewer,
+            t5.user_name AS interviewee,
+			t7.company_name,
+			t10.meeting_file_id,
+			t10.file_name,
+			t10.sheet_name,
+			t10.row_company,
+			t10.clm_company,
+			t10.row_user,
+			t10.clm_user,
+			t10.row_date,
+			t10.clm_date,
+			t10.row_meeting,
+			t10.clm_meeting,
+			t11.meeting_detail_id,
+			t11.meeting_id,
+			t11.question,
+			t11.answer,
+			t11.follow,
+			t11.question_type
+		FROM t_meeting t1
+			LEFT OUTER JOIN m_lms_user t2 ON t2.lms_user_id = t1.first_create_user
+            LEFT OUTER JOIN m_user t3 ON t3.user_id = t2.user_id
+            LEFT OUTER JOIN m_lms_user t4 ON t4.lms_user_id = t1.lms_user_id
+            LEFT OUTER JOIN m_user t5 ON t5.user_id = t4.user_id
+            LEFT OUTER JOIN t_user_company t6 ON t6.lms_user_id = t1.lms_user_id
+            LEFT OUTER JOIN m_company t7 ON t7.company_id = t6.company_id
+            LEFT OUTER JOIN t_course_user t8 ON t8.lms_user_id = t4.lms_user_id
+            LEFT OUTER JOIN t_course_meeting t9 ON t9.course_id = t8.course_id
+            LEFT OUTER JOIN m_meeting_file t10 ON t10.meeting_file_id = t9.meeting_file_id
+            LEFT OUTER JOIN t_meeting_detail t11 ON t11.meeting_id = t1.meeting_id
+		WHERE t1.meeting_id = #{meetingId}
+			AND t1.delete_flg = #{deleteFlg}
+		ORDER BY t11.meeting_detail_id ASC
+	</select>
+
+</mapper>

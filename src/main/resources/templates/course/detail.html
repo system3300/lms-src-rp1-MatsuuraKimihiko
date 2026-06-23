@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{/common/layout :: layout(~{::title},~{::body/content()})}">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>コース詳細 | LMS</title>
+</head>
+<body>
+
+	<div class="container">
+		<ol class="breadcrumb">
+			<li class="active">コース詳細</li>
+		</ol>
+
+		<div>
+			<h2 class="di">
+				[[${courseServiceCourseDto.courseName}]] <small>[[|${#dates.format(courseServiceCourseDto.openTime,'yyyy年M月d日(E)')}～${#dates.format(courseServiceCourseDto.closeTime,'yyyy年M月d日(E)')}|]]</small>
+			</h2>
+			<div class="fr pt10">
+				<button id="open-all-panel" class="mr4">すべて開く</button>
+				<button id="close-all-panel">すべて折りたたむ</button>
+			</div>
+		</div>
+		<br class="cb" />
+
+		<div class="panel panel-primary" th:each="categoryDto : ${courseServiceCourseDto.courseServiceCategoryDtoList}">
+			<div class="panel-heading">
+				<h3 class="panel-title ib" data-toggle="popover" data-placement="right" data-content="">
+					<span>[[${categoryDto.categoryName}]]</span>
+				</h3>
+				<span class="toggle-btn toggle-btn-up"></span>
+			</div>
+			<div class="panel-body">
+				<table class="table table-hover sctionList">
+					<tr th:each="sectionDto : ${categoryDto.courseServiceSectionDtoList}" th:object="${sectionDto}">
+						<td class="w20per">[[*{#dates.format(date,'yyyy年M月d日')}]]</td>
+						<td class="wh">[[*{sectionName}]]</td>
+						<td class="w20per">
+							<form th:action="@{/section/detail}" method="post">
+								<input type="hidden" name="courseId" th:value="${courseServiceCourseDto.courseId}" />
+								<input type="hidden" name="sectionId" th:value="*{sectionId}" />
+								<input type="submit" class="btn btn-default" value="詳細" />
+							</form>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
+	</div>
+
+	<script>
+		$(function() {
+			$('. ').click(function() {
+					if ($(this).parent().next('.panel-body').attr('class') === 'panel-body dn') {
+						$(this).parent().next('.panel-body').attr('class', 'panel-body');
+						$(this).attr('class', 'toggle-btn toggle-btn-up');
+					} else {
+						$(this).parent().next('.panel-body').attr('class', 'panel-body dn');
+						$(this).attr('class', 'toggle-btn toggle-btn-down');
+					}
+			});
+		});
+		$(function() {
+			$('# ').click(function() {
+				$('.panel-body').attr('class', 'panel-body');
+				$('.toggle-btn').attr('class', 'toggle-btn toggle-btn-up');
+			});
+		});
+		$(function() {
+			$('# ').click(function() {
+				$('.panel-body').attr('class', 'panel-body dn');
+				$('.toggle-btn').attr('class', 'toggle-btn toggle-btn-down');
+			});
+		});
+	</script>
+
+</body>
+</html>

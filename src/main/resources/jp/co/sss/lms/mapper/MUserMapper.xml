@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.co.sss.lms.mapper.MUserMapper">
+
+	<select id="findByMailAddress" resultType="jp.co.sss.lms.entity.MUser">
+		SELECT t1.user_id
+		FROM m_user t1
+			INNER JOIN m_lms_user t2 ON t2.user_id = t1.user_id
+			AND t2.delete_flg = #{deleteFlg}
+		WHERE t1.mail_address = #{mailAddress}
+			AND t1.delete_flg = #{deleteFlg}
+	</select>
+
+	<select id="findByUserId" resultType="jp.co.sss.lms.entity.MUser">
+		SELECT *
+		FROM m_user
+		WHERE user_id = #{userId}
+			AND delete_flg = #{deleteFlg}
+	</select>
+
+	<select id="getLoginId" resultType="String">
+		SELECT login_id
+		FROM m_user
+		WHERE user_id = #{userId}
+			AND delete_flg = #{deleteFlg}
+	</select>
+
+	<update id="updatePassword" parameterType="jp.co.sss.lms.entity.MUser">
+		UPDATE m_user
+		SET
+			password = #{password},
+			password_change_date = #{passwordChangeDate},
+			last_modified_user = #{lastModifiedUser},
+			last_modified_date = #{lastModifiedDate}
+		WHERE user_id = #{userId}
+	</update>
+
+	<update id="updatePasswordChangeDate" parameterType="jp.co.sss.lms.entity.MUser">
+		UPDATE m_user
+		SET
+			password_change_date = #{passwordChangeDate},
+			last_modified_user = #{lastModifiedUser},
+			last_modified_date = #{lastModifiedDate}
+		WHERE user_id = #{userId}
+	</update>
+
+	<update id="updateSecrityFlg" parameterType="jp.co.sss.lms.entity.MUser">
+		UPDATE m_user
+		SET
+			security_agree_flg = #{securityAgreeFlg},
+			last_modified_user = #{lastModifiedUser},
+			last_modified_date = #{lastModifiedDate}
+		WHERE user_id = #{userId}
+	</update>
+
+</mapper>

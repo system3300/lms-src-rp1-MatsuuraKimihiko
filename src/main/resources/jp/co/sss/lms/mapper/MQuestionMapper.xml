@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.co.sss.lms.mapper.MQuestionMapper">
+
+	<select id="findByExamId" resultType="jp.co.sss.lms.entity.MQuestion">
+		SELECT * 
+		FROM m_question
+		WHERE exam_id = #{examId} 
+			AND delete_flg = #{deleteFlg}
+		ORDER BY question_id
+	</select>
+
+</mapper>

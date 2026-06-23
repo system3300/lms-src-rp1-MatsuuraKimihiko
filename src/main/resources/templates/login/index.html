@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	th:replace="~{/common/login-layout :: layout(~{::title},~{::body/content()})}">
+<head>
+<meta charset="UTF-8" />
+<title>ログイン | LMS</title>
+</head>
+<body>
+
+	<h2>ログイン</h2>
+	<div class="well bs-component">
+
+		<form th:method="post" th:action="@{/login}" class="form-horizontal" th:object="${loginForm}">
+
+			<span class="help-inline error" th:if="${loginFaild}">*&nbsp;[[${loginFaild}]]</span> 
+			<strong class="text-info form-group" th:if="${session.sessionTimeout}">*&nbsp;[[${session.sessionTimeout}]]</strong>
+			<strong class="text-info form-group" th:if="${session.logout}">*&nbsp;[[${session.logout}]]</strong>
+
+			<fieldset>
+				<div class="form-group">
+					<label for="loginId" class="col-lg-2 control-label">ログインID</label>
+					<div class="col-lg-10">
+						<input type="text" name="loginId" th:field="*{loginId}" class="form-control" th:value="*{loginId}" id="loginId" th:errorclass="errorInput" />
+						<span th:errors="*{loginId}" class="help-inline error"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="password" class="col-lg-2 control-label">パスワード</label>
+					<div class="col-lg-10">
+						<input type="password" name="password" th:field="*{password}" class="form-control" th:value="*{password}" id="password" th:errorclass="errorInput" />
+						<span th:errors="*{password}" class="help-inline error"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-lg-10 col-lg-offset-2">
+						<input type="submit" class="btn btn-primary" value="ログイン" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-lg-10 col-lg-offset-2">
+						<p class="text-left">
+							<a th:href="@{/password/resetPassword}">パスワードを忘れた方はこちら</a>
+						</p>
+					</div>
+				</div>
+			</fieldset>
+		</form>
+
+	</div>
+
+	<!-- お知らせ -->
+	<div th:if="${!(session.infoDto?.content == null || session.infoDto?.content == '')}" class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title di">お知らせ</h3>
+		</div>
+		<div class="panel-body">
+			<p class="lead" style="white-space: pre-wrap;">[[${session.infoDto.content}]]</p>
+			<p class="tar">[[${#dates.format(session.infoDto.lastModifiedDate, "yyyy/M/d HH:mm")}]]</p>
+		</div>
+	</div>
+
+	<!-- マニュアルダウンロード -->
+	<div class="row">
+		<div class="col-md-6">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title">マニュアルはこちらからダウンロード</h3>
+				</div>
+				<div class="panel-body">
+					<p><a href="/pdf/manual_comp_001.pdf" target="_blank" th:href="@{/pdf/manual_comp_001.pdf}">企業担当者様・育成担当者様LMS利用マニュアル</a></p>
+					<p><a href="/pdf/manual_stud_001.pdf" target="_blank" th:href="@{/pdf/manual_stud_001.pdf}">受講生LMS利用マニュアル</a></p>
+					<p><a href="/pdf/manual_comp_account_001.pdf" target="_blank" th:href="@{/pdf/manual_comp_account_001.pdf}">企業担当者アカウントご変更の際のご注意</a></p>
+				</div>
+			</div>
+		</div>
+
+		<!-- よくある質問 -->
+		<div class="col-md-6">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title">よくあるご質問はこちら</h3>
+				</div>
+				<div class="panel-body">
+					<p><a target="_blank" th:href="@{/faq}">よくあるご質問</a></p>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+</body>
+</html>

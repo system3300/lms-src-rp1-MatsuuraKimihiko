@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.co.sss.lms.mapper.TIntelligibilityMapper">
+
+	<select id="getCountByDailyReportSubmitId" resultType="Integer">
+		SELECT count(*) 
+		FROM t_intelligibility
+		WHERE daily_report_submit_id = #{dailyReportSubmitId};
+	</select>
+
+	<delete id="delete">
+		DELETE FROM t_intelligibility
+		WHERE daily_report_submit_id = #{dailyReportSubmitId};
+	</delete>
+
+	<insert id="insert" parameterType="jp.co.sss.lms.entity.TIntelligibility" useGeneratedKeys="true" keyProperty="intelligibilityId">
+		INSERT INTO t_intelligibility 
+		(
+			daily_report_submit_id,
+			field_num,
+			field_name,
+			field_value,
+			account_id,
+			delete_flg,
+			first_create_user,
+			first_create_date,
+			last_modified_user,
+			last_modified_date
+		) VALUES (
+			#{dailyReportSubmitId},
+			#{fieldNum},
+			#{fieldName},
+			#{fieldValue},
+			#{accountId},
+			#{deleteFlg},
+			#{firstCreateUser},
+			#{firstCreateDate},
+			#{lastModifiedUser},
+			#{lastModifiedDate}
+		)
+	</insert>
+
+</mapper>

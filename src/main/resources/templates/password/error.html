@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{common/login-layout :: layout(~{::title},~{::body/content()})}">
+<head>
+<meta charset="UTF-8" />
+<title>パスワード再設定　エラー画面 | LMS</title>
+</head>
+<body>
+
+	<h2>パスワード再設定</h2>
+
+	<div class="well bs-component">
+		パスワードの再設定メール発行処理から[[${timeLimit}]]時間以上経過している場合は、もう一度処理を行ってください。<br />
+		再設定を促すメールが再度とどきますので、[[${timeLimit}]]時間以内にお手続きください。<br /> <br />
+		尚、再設定メールが届かない、届いても引き続きこの画面が出るなどの場合は東京ITスクール運営事務局[[${tismail}]]にお問い合わせください。<br />
+	</div>
+
+	<a th:href="@{/}" class="btn btn-default">ログイン画面へ</a>
+
+</body>
+</html>

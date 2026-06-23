@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{/common/layout :: layout(~{::title},~{::body/content()})}">
+
+<head>
+	<meta charset="UTF-8">
+	<title>勤怠一括登録 | LMS</title>
+</head>
+
+<body>
+
+	<h2>勤怠一括登録</h2>
+
+	<div th:if="${message}" class="alert alert-info alert-dismissible" role="alert">
+		<button type="button" class="close" data-dismiss="alert">&times;</button>
+		<span th:text="${message}"></span>
+	</div>
+
+	<form th:object="${bulkRegistForm}" method="post" th:action="@{/attendance/bulkRegist/search}"
+		class="form-horizontal">
+
+		<!-- 検索 -->
+		<div class="well bs-component">
+			<fieldset>
+				<legend>検索</legend>
+
+				<div class="form-group">
+					<label class="col-lg-2 control-label">期間</label>
+					<div class="col-lg-10 form-inline">
+
+						<input type="text" class="form-control datepickerFrom" style="width:10em"
+							th:field="*{searchPeriodFrom}">
+
+						～
+
+						<input type="text" class="form-control datepickerTo" style="width:10em"
+							th:field="*{searchPeriodTo}">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="col-lg-2 control-label">会場名</label>
+					<div class="col-lg-10">
+
+						<input type="text" class="form-control" th:value="*{placeName}" readonly>
+
+						<input type="hidden" th:field="*{placeId}">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<div class="col-lg-10 col-lg-offset-2">
+						<button type="submit" name="searcher" class="btn btn-primary">
+							検索
+						</button>
+					</div>
+				</div>
+
+			</fieldset>
+		</div>
+
+		<!-- エラー -->
+		<div th:if="${#fields.hasErrors('*')}" style="color:red;">
+			<p th:each="err : ${#fields.errors('*')}" th:text="${err}"></p>
+		</div>
+
+
+		<!-- 一覧 -->
+		<table class="table">
+			<tbody>
+
+				<th:block th:each="item, stat : ${bulkRegistForm.dailyAttendanceFormList}">
+
+					<!-- 日付ヘッダ -->
+					<th:block th:if="${stat.index == 0 or
+		            bulkRegistForm.dailyAttendanceFormList[stat.index - 1].dispTrainingDate
+		            != item.dispTrainingDate}">
+
+						<tr style="background-color:#f5f5f5; border-top:2px solid #ccc;">
+							<th colspan="6">
+								<span th:text="${item.dispTrainingDate}"></span>
+							</th>
+
+							<td colspan="4" style="text-align:right;">
+
+								<button type="button" class="btn btn-default btn-sm copy-btn"
+									th:data-date="${#dates.format(item.trainingDate, 'yyyy-MM-dd')}">
+									受講生が入力した時刻をコピーする
+								</button>
+
+								<button type="submit" class="btn btn-info btn-sm" name="complete"
+									th:value="${stat.index}" th:formaction="@{/attendance/bulkRegist/complete}">
+									確定する
+								</button>
+
+							</td>
+						</tr>
+
+						<tr>
+							<th>ユーザー名</th>
+							<th>コース名</th>
+							<th>出勤</th>
+							<th>退勤</th>
+							<th>中抜け</th>
+							<th>ステータス</th>
+							<th>備考</th>
+							<th>開始時間</th>
+							<th>終了時間</th>
+							<th>欠席</th>
+						</tr>
+
+					</th:block>
+
+					<!-- 明細 -->
+					<tr th:data-date="${#dates.format(item.trainingDate, 'yyyy-MM-dd')}">
+
+						<td th:text="${item.userName}"></td>
+						<td th:text="${item.courseName}"></td>
+
+						<td
+							th:text="${#strings.isEmpty(item.trainingStartTimeDisplay) ? '[未入力]' : item.trainingStartTimeDisplay}">
+						</td>
+
+						<td
+							th:text="${#strings.isEmpty(item.trainingEndTimeDisplay) ? '[未入力]' : item.trainingEndTimeDisplay}">
+						</td>
+
+						<td th:text="${item.blankTimeValue}"></td>
+						<td th:text="${item.statusDispName}"></td>
+						<td th:text="${item.note}"></td>
+
+						<!-- hidden（★修正：必ずtd内） -->
+						<td style="display:none;">
+							<input type="hidden"
+								th:field="*{dailyAttendanceFormList[__${stat.index}__].companyAttendanceId}">
+						</td>
+
+						<td style="display:none;">
+							<input type="hidden"
+								th:field="*{dailyAttendanceFormList[__${stat.index}__].studentAttendanceId}">
+						</td>
+
+						<td style="display:none;">
+							<input type="hidden" th:field="*{dailyAttendanceFormList[__${stat.index}__].lmsUserId}">
+						</td>
+
+						<td style="display:none;">
+							<input type="hidden" th:field="*{dailyAttendanceFormList[__${stat.index}__].trainingDate}">
+						</td>
+
+						<!-- editable -->
+						<td>
+							<input type="text" class="form-control"
+								th:field="*{dailyAttendanceFormList[__${stat.index}__].trainingStartTime}">
+						</td>
+
+						<td>
+							<input type="text" class="form-control"
+								th:field="*{dailyAttendanceFormList[__${stat.index}__].trainingEndTime}">
+						</td>
+
+						<td>
+							<input type="checkbox" th:field="*{dailyAttendanceFormList[__${stat.index}__].absent}">
+						</td>
+
+					</tr>
+
+				</th:block>
+
+			</tbody>
+		</table>
+
+	</form>
+
+	<style>
+		.copied-input {
+			background-color: #fff3cd !important;
+		}
+	</style>
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+
+			document.querySelectorAll(".copy-btn").forEach(btn => {
+
+				btn.addEventListener("click", function () {
+
+					const date = this.dataset.date;
+
+					// 前回の色を消す
+					document.querySelectorAll(".copied-input").forEach(el => {
+						el.classList.remove("copied-input");
+					});
+
+					document.querySelectorAll(`tr[data-date='${date}']`).forEach(tr => {
+
+						// 表示用の値
+						const startText = tr.children[2]?.textContent.trim();
+						const endText = tr.children[3]?.textContent.trim();
+
+						// 入力欄
+						const startInput = tr.querySelector("input[name$='.trainingStartTime']");
+						const endInput = tr.querySelector("input[name$='.trainingEndTime']");
+
+						// 出勤
+						if (startInput && startText && startText !== "[未入力]") {
+							startInput.value = startText;
+							startInput.classList.add("copied-input");
+						}
+
+						// 退勤
+						if (endInput && endText && endText !== "[未入力]") {
+							endInput.value = endText;
+							endInput.classList.add("copied-input");
+						}
+
+					});
+				});
+
+			});
+
+		});
+	</script>
+
+</body>
+
+</html>

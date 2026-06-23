@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.co.sss.lms.mapper.TExamResultDetailMapper">
+
+	<insert id="insert" parameterType="jp.co.sss.lms.entity.TExamResultDetail" useGeneratedKeys="true" keyProperty="examResultDetailId">
+		INSERT INTO t_exam_result_detail
+		(
+			exam_result_id,
+			lms_user_id,
+			question_id,
+			reply,
+			account_id,
+			delete_flg,
+			first_create_user,
+			first_create_date,
+			last_modified_user,
+			last_modified_date
+		) VALUES (
+			#{examResultId},
+			#{lmsUserId},
+			#{questionId},
+			#{reply},
+			#{accountId},
+			#{deleteFlg},
+			#{firstCreateUser},
+			#{firstCreateDate},
+			#{lastModifiedUser},
+			#{lastModifiedDate}
+		)
+	</insert>
+
+</mapper>

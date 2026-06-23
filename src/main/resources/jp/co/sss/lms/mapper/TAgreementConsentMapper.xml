@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.co.sss.lms.mapper.TAgreementConsentMapper">
+
+	<select id="getAgreementConsentDtoList" resultType="jp.co.sss.lms.dto.AgreementConsentDto">
+		SELECT
+			t1.agreement_consent_id,
+			t1.last_modified_date AS contract_date,
+			t3.course_name,
+			t3.open_time AS contract_start_date,
+			t3.close_time AS contract_end_date
+		FROM t_agreement_consent t1
+			LEFT OUTER JOIN t_company_course t2 ON t2.company_course_id = t1.company_course_id
+			LEFT OUTER JOIN m_course t3 ON t3.course_id = t2.course_id
+		WHERE t2.company_id = #{companyId}
+			<if test="today != null">
+				AND t3.close_time >= #{today}
+			</if>
+			AND t1.consent_flg = #{consentFlg}
+			AND t1.delete_flg = #{deleteFlg}
+		ORDER BY t3.open_time DESC
+	</select>
+
+</mapper>

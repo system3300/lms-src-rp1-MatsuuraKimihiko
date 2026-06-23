@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.co.sss.lms.mapper.TMailQueMapper">
+
+	<insert id="insert" parameterType="jp.co.sss.lms.entity.TMailQue" useGeneratedKeys="true" keyProperty="mailQueId">
+		INSERT INTO t_mail_que (
+			mail_address_to,
+			mail_address_cc,
+			mail_address_bcc,
+			subject,
+			body,
+			delete_flg,
+			first_create_user,
+			first_create_date,
+			last_modified_user,
+			last_modified_date
+		) VALUES (
+			#{mailAddressTo},
+			#{mailAddressCc},
+			#{mailAddressBcc},
+			#{subject},
+			#{body},
+			#{deleteFlg},
+			#{firstCreateUser},
+			#{firstCreateDate},
+			#{lastModifiedUser},
+			#{lastModifiedDate}
+		)
+	</insert>
+
+</mapper>

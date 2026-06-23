@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{common/login-layout :: layout(~{::title},~{::body/content()})}">
+<head>
+<meta charset="UTF-8" />
+<title>パスワード再設定 | LMS</title>
+</head>
+<body>
+
+	<h2>パスワード再設定</h2>
+
+	<div class="well bs-component">
+		[[${mailAddress}]]のメールアドレスへ<br />
+		パスワード再設定についてのメールを送信しました。<br />
+		メールの内容を[[${timeLimit}]]時間以内にご確認ください。 
+	</div>
+
+	<a th:href="@{/}" class="btn btn-default">ログイン画面へ</a>
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	th:replace="~{/common/layout :: layout(~{::title},~{::body/content()})}">
+<head>
+<meta charset="UTF-8" />
+<title>試験【[[${examDetailDto.examName}]]】 | LMS</title>
+</head>
+<body>
+
+	<th:block th:object="${examDetailDto}">
+	
+		<ol class="breadcrumb">
+			<li><a th:href="@{/course/detail}">コース詳細</a></li>
+			<li><a th:href="@{|/section/detail?sectionId=*{sectionId}|}">セクション詳細</a></li>
+			<li class="active">試験</li>
+		</ol>
+	
+		<div>
+			<h2>[[*{examName}]]</h2>
+			<table class="table">
+				<tr>
+					<th class="w33per">問題数</th>
+					<td>[[*{numOfQuestion}]]問</td>
+				</tr>
+				<tr>
+					<th>制限時間</th>
+					<td>[[*{limitTime}]]分</td>
+				</tr>
+			</table>
+			<form class="mb30" th:action="@{/exam/question}" th:method="post">
+				<input type="hidden" name="examId" th:value="*{examId}">
+				<input type="hidden" name="sectionId" th:value="*{sectionId}">
+				<input type="hidden" name="examSectionId" th:value="*{examSectionId}">
+				<input type="submit" value="試験を開始する" class="btn btn-primary" />
+			</form>
+	
+			<th:block th:if="*{!#lists.isEmpty(examResultDtoList)}">
+				<h3>過去の試験結果</h3>
+				<table class="table">
+					<tr>
+						<th>回数</th>
+						<th>点数</th>
+						<th>実施日時</th>
+						<th>詳細</th>
+					</tr>
+					<tr th:each="examResultDto, stat : *{examResultDtoList}">
+						<td>[[${stat.count}]]回目</td>
+						<td>[[${#numbers.formatDecimal(examResultDto.point, 1, 1)}]]点</td>
+						<td>[[${#dates.format(examResultDto.date, 'yyyy年MM月dd日 HH時mm分ss秒')}]]</td>
+						<td>
+							<form th:method="post" th:action="@{/exam/resultDetail}">
+								<input type="submit" value="詳細" class="btn btn-default" />
+								<input type="hidden" name="examResultId" th:value="${examResultDto.examResultId}">
+								<input type="hidden" name="lmsUserId" th:value="*{lmsUserId}">
+							</form>
+						</td>
+					</tr>
+				</table>
+			</th:block>
+	
+		</div>
+	
+	</th:block>
+
+</body>
+</html>

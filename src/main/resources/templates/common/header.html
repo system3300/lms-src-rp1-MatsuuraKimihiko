@@ -1,0 +1,241 @@
+<html xmlns:th="http://www.thymeleaf.org" th:remove="tag">
+<meta charset="UTF-8" />
+<div th:fragment="layout-header" th:remove="tag">
+
+	<nav class="navbar navbar-default">
+		<div class="container">
+
+			<div class="navbar-header">
+				<a class="navbar-brand">LMS 学習管理システム</a>
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#nav-content">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+			</div>
+
+			<div id="nav-content" class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+
+					<!-- 受講生 -->
+					<th:block th:if="${session.loginUserDto.role == '0001'}">
+						<li><a th:href="@{/course/detail}">マイコース</a></li>
+						<li><a href="/lms/download/teachingMaterialList">教材ダウンロード</a></li>
+						<li><a th:href="@{/user/detail}">マイページ</a></li>
+						<li><a th:href="@{/attendance/detail}">勤怠</a></li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+								機能 <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li th:if="${session.loginUserDto != null && session.loginUserDto.fileShareFlg == 1}">
+									<a th:href="@{/fileshare/list}">ファイル共有</a>
+								</li>
+							</ul>
+						</li>
+					</th:block>
+
+					<!-- 講師 -->
+					<th:block th:if="${session.loginUserDto.role == '0002'}">
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+								研修管理<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a th:href="@{/course/list}">コース</a></li>
+								<li><a th:href="@{/user/list}">受講生</a></li>
+								<li><a th:href="@{/report/list}">日報</a></li>
+								<li><a th:href="@{/exam/list}">試験結果</a></li>
+								<li><a href="/lms/deliverables/list/">成果物</a></li>
+								<li><a th:href="@{/attendance/list}">勤怠確認</a></li>
+								<li><a th:href="@{/attendance/bulkRegist}">勤怠一括登録</a></li>
+								<li><a href="/lms/evReport/score">評価レポート採点確認</a></li>
+							</ul>
+						</li>
+
+						<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+								面談・報告会 <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a th:href="@{/takeOver/list}">引継面談／会場見学 実施予定</a></li>
+								<li><a th:href="@{/presentation/teamList}">チーム編成</a></li>
+								<li><a th:href="@{/presentation/list}">成果報告会実施予定</a></li>
+							</ul>
+						</li>
+
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+								その他 <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a th:href="@{/fileshare/list}">ファイル共有</a></li>
+							</ul>
+							</li>
+					</th:block>
+
+					<!-- 企業担当者 -->
+					<th:block th:if="${session.loginUserDto.role == '0003'}">
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+								研修管理 <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a th:href="@{/user/list/student}">受講生一覧</a></li>
+								<li><a th:href="@{/report/list}">日報確認</a></li>
+								<li><a th:href="@{/attendance/list}">勤怠情報確認</a></li>
+								<li><a th:href="@{/exam/list}">試験結果確認</a></li>
+							</ul>
+						</li>
+
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+								予約 <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a th:href="@{/takeOver/list}">引継面談／会場見学 予約</a></li>
+								<li><a th:href="@{/presentation/list}">成果報告会出欠</a></li>
+							</ul>
+						</li>
+
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+								助成金 <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="/lms/subsidy/company/detail">企業情報編集</a></li>
+								<li><a href="/lms/subsidy/downloaled/type">申請書類DL</a></li>
+							</ul>
+						</li>
+
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+								その他 <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a th:href="@{/user/list/company}">受講生以外のユーザー</a></li>
+								<li><a th:href="@{/contract/history/list}">契約内容確認</a></li>
+								<li th:if="${session.loginUserDto != null && session.loginUserDto.fileShareFlg == 1}">
+									<a th:href="@{/fileshare/list}">ファイル共有</a>
+								</li>
+							</ul>
+						</li>
+					</th:block>
+
+					<!-- 管理者 -->
+					<th:block th:if="${session.loginUserDto.role == '0004'}">
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+								事務 <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="/lms/mail/template/list/">メールテンプレート管理</a></li>
+								<li><a th:href="@{/mail/sendList}">メール一斉送信</a></li>
+								<li><a th:href="@{/company/list}">企業管理</a></li>
+								<li><a th:href="@{/user/list}">ユーザー管理</a></li>
+								<li><a th:href="@{/contract/history/list}" class="form-horizontal">契約履歴</a></li>
+								<li><a th:href="@{/takeOver/candidateList}">引継面談／会場見学 スケジュール</a></li>
+								<li><a th:href="@{/takeOver/list}">引継面談／会場見学 実施予定</a></li>
+								<li><a href="/lms/presentation/candidateList">成果報告会スケジュール</a></li>
+								<li><a th:href="@{/presentation/teamList}">成果報告会チーム確定</a></li>
+								<li><a th:href="@{/presentation/list}">成果報告会実施予定</a></li>
+								<li><a href="/lms/estimate/list/">請求情報ダウンロード</a></li>
+								<li><a href="/lms/evReport/result/list/">評価レポート公開</a></li>
+								<li><a href="/lms/estimate/product/list/">見積もり品マスタ管理</a></li>
+							</ul>
+						</li>
+
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+								営業 <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="/lms/entry/list/">エントリー情報確定</a></li>
+								<li><a href="/lms/assign/spreadsheet">会場アサイン</a></li>
+								<li><a th:href="@{/takeOver/list}">引継面談／会場見学 実施予定</a></li>
+								<li><a th:href="@{/presentation/list}">成果報告会実施予定</a></li>
+							</ul>
+						</li>
+
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+								運営 <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a th:href="@{/place/list}">会場管理</a></li>
+								<li><a th:href="@{/genre/list}">試験カテゴリー管理</a></li>
+								<li><a th:href="@{/exam/list}">試験内容管理</a></li>
+								<li><a href="/lms/dailyReport/list">日報管理</a></li>
+								<li><a href="/lms/deliverables/manage/list">成果物管理</a></li>
+								<li><a th:href="@{/evReport/list}">評価レポート管理</a></li>
+								<li><a th:href="@{/meeting/fileList}">面談ファイル管理</a></li>
+								<li><a th:href="@{/holiday/list}">休暇日設定</a></li>
+								<li><a th:href="@{/course/list}">コース管理</a></li>
+								<li><a th:href="@{/movie/categoryList}">動画管理</a></li>
+								<li><a th:href="@{/mail/sendList}">メール一斉送信</a></li>
+								<li><a th:href="@{/user/list}">ユーザー管理</a></li>
+								<li><a href="/lms/displayControl/list">データの表示制御</a></li>
+							</ul>
+						</li>
+
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+								助成金 <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a th:href="@{/company/list}">企業情報</a></li>
+								<li><a href="/lms/subsidy/template/list">テンプレート管理</a></li>
+							</ul>
+						</li>
+
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+								受講生情報 <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a th:href="@{/exam/list}">試験</a></li>
+								<li><a th:href="@{/report/list}">レポート</a></li>
+								<li><a href="/lms/deliverables/list/">成果物</a></li>
+								<li><a href="/lms/evReport/score">評価レポート採点確認</a></li>
+								<li><a th:href="@{/attendance/list}">勤怠</a></li>
+								<li><a th:href="@{/attendance/bulkRegist}">勤怠一括登録</a></li>
+							</ul>
+						</li>
+
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+								その他 <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a th:href="@{/fileshare/list}">ファイル共有</a></li>
+								<li><a href="/lms/course/csv">CSV出力</a></li>
+								<li><a th:href="@{/faq/categoryList}">FAQ管理</a></li>
+								<li><a th:href="@{/contract/history/list}">契約内容変更</a></li>
+								<li><a th:href="@{/info/latest}">お知らせ設定</a></li>
+								<li><a th:href="@{/repair/list}">改修履歴設定</a></li>
+							</ul>
+						</li>
+					</th:block>
+				</ul>
+
+				<ul class="nav navbar-nav navbar-right">
+					<li class="text-center">
+						<a href="#" id="lms-infomation">
+							<span class="glyphicon glyphicon-info-sign"></span>
+						</a>
+						<span id="lms-infomation-hide" data-container="body" data-toggle="popover" data-placement="bottom" 
+							title="お知らせ" data-content="" data-html="true"></span>
+					</li>
+					<li><a><small th:inline="text">ようこそ[[${session?.loginUserDto?.userName}]]さん</small></a></li>
+					<li>
+						<button type="button" class="btn btn-default navbar-btn" onclick="location.href='/lms/logout'">
+							<i class="text-primary glyphicon glyphicon-log-out"> ログアウト</i>
+						</button>
+					</li>
+				</ul>
+
+			</div>
+		</div>
+	</nav>
+
+</div>
+</html>

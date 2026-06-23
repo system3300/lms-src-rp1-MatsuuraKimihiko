@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	th:replace="~{/common/layout :: layout(~{::title},~{::body/content()})}">
+<head>
+<meta charset="utf-8">
+<title>過去契約一覧 | LMS</title>
+</head>
+
+<body>
+
+	<h2>過去契約一覧</h2>
+
+	<div id="DataTables_Table_0_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+		<div class="row">
+			<div class="col-sm-12">
+				<table class="table table-hover sortabletable dataTable no-footer"
+					id="DataTables_Table_0" role="grid" aria-describedby="DataTables_Table_0_info">
+					<thead>
+						<tr role="row">
+							<th class="sorting_asc" tabindex="0" aria-controls="user-table" rowspan="1" colspan="1"
+								aria-sort="ascending" aria-label="契約日: activate to sort column descending">契約日</th>
+							<th class="sorting" tabindex="0" aria-controls="user-table" rowspan="1" colspan="1"
+								aria-label="コース名: activate to sort column ascending">コース名</th>
+							<th class="sorting" tabindex="0" aria-controls="user-table" rowspan="1" colspan="1"
+								aria-label="契約期間: activate to sort column ascending">契約期間</th>
+							<th class="sorting" tabindex="0" aria-controls="user-table" rowspan="1" colspan="1"
+								aria-label="契約確認: activate to sort column ascending">契約確認</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="agreementConsentDto : ${agreementConsentDtoList}" role="row" th:object="${agreementConsentDto}">
+							<td class="sorting_1">[[*{#dates.format(contractDate, 'yyyy年MM月dd日')}]]</td>
+							<td>[[*{courseName}]]</td>
+							<td>[[*{#dates.format(contractStartDate, 'yyyy年MM月dd日')}]] 
+								～ [[*{#dates.format(contractEndDate, 'yyyy年MM月dd日')}]]</td>
+							<td>
+								<form th:action="@{/contract/history/detail}" method="post">
+									<input type="submit" value="確認" class="btn btn-default" />
+									<input type="hidden" name="agreementConsentId" th:value="*{agreementConsentId}" />
+								</form>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{/common/layout :: layout(~{::title},~{::body/content()})}">
+<head>
+<meta charset="UTF-8">
+<title>教材ダウンロード | LMS</title>
+</head>
+<body>
+
+	<p class="help-inline error">* 教材ダウンロード機能は未実装です。</p>
+
+	<h3>DEMOコース</h3>
+	<div id="file-tree">
+	  <ul>
+	    <li data-jstree='{"opened" : true, "icon" : "jstree-folder"}'>
+	      11月開講
+	      <ul>
+	        <li data-jstree='{"opened" : true, "icon" : "jstree-folder"}'>
+	          /01_カリキュラム
+	          <ul>
+	            <li data-jstree='{"icon" : "jstree-file"}'>
+	              <form method="post" action="#" class="file-download">
+	                <input type="hidden" name="filePath" id="filePath" />
+	                <a class="target-file">2020年度キャリア開発11月コース.pdf</a>
+	              </form>
+	            </li>
+	          </ul>
+	        </li>
+	      </ul>
+	      <ul>
+	        <li data-jstree='{"opened" : true, "icon" : "jstree-folder"}'>
+	          /02_マニュアル
+	          <ul>
+	            <li data-jstree='{"icon" : "jstree-file"}'>
+	              <form method="post" action="#" class="file-download">
+	                <input type="hidden" name="filePath" id="filePath" />
+	                <a class="target-file">LMS利用マニュアル.pdf</a>
+	              </form>
+	            </li>
+	          </ul>
+	          <ul>
+	            <li data-jstree='{"icon" : "jstree-file"}'>
+	              <form method="post" action="#" class="file-download">
+	                <input type="hidden" name="filePath" id="filePath" />
+	                <a class="target-file">Slack招待リンク.pdf</a>
+	              </form>
+	            </li>
+	          </ul>
+	          <ul>
+	            <li data-jstree='{"icon" : "jstree-file"}'>
+	              <form method="post" action="#" class="file-download">
+	                <input type="hidden" name="filePath" id="filePath" />
+	                <a class="target-file">キャリア開発研修_受講生用マニュアル.pdf</a>
+	              </form>
+	            </li>
+	          </ul>
+	        </li>
+	      </ul>
+	      <ul>
+	        <li data-jstree='{"opened" : true, "icon" : "jstree-folder"}'>
+	          /03_日報
+	          <ul>
+	            <li data-jstree='{"icon" : "jstree-file"}'>
+	              <form method="post" action="#" class="file-download">
+	                <input type="hidden" name="filePath" id="filePath" />
+	                <a class="target-file">日報の書き方.pdf</a>
+	              </form>
+	            </li>
+	          </ul>
+	        </li>
+	      </ul>
+	    </li>
+	  </ul>
+	</div>
+
+	<script>
+		$(function () {
+			$("#file-tree").jstree();
+		});
+	</script>
+
+</body>
+</html>

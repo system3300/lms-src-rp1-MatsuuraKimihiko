@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.co.sss.lms.mapper.TTemporaryPassStorageMapper">
+
+	<select id="findByUserId" resultType="jp.co.sss.lms.entity.TTemporaryPassStorage">
+		SELECT * 
+		FROM t_temporary_pass_storage 
+		WHERE user_id = #{userId} 
+			AND delete_flg = #{deleteFlg}
+	</select>
+
+	<insert id="insert" parameterType="jp.co.sss.lms.entity.TTemporaryPassStorage" useGeneratedKeys="true" keyProperty="temporaryPassStorageId">
+		INSERT INTO t_temporary_pass_storage 
+		(
+			user_id,
+			change_key,
+			time_limit,
+			delete_flg,
+			first_create_user,
+			first_create_date,
+			last_modified_user,
+			last_modified_date
+		) VALUES (
+			#{userId},
+			#{changeKey},
+			#{timeLimit},
+			#{deleteFlg},
+			#{firstCreateUser},
+			#{firstCreateDate},
+			#{lastModifiedUser},
+			#{lastModifiedDate}
+		)
+	</insert>
+
+	<update id="update">
+		UPDATE t_temporary_pass_storage
+		SET
+			user_id = #{userId},
+			change_key = #{changeKey},
+			time_limit = #{timeLimit},
+			delete_flg = #{deleteFlg},
+			last_modified_user = #{lastModifiedUser},
+			last_modified_date = #{lastModifiedDate}
+		WHERE temporary_pass_storage_id = #{temporaryPassStorageId} 
+			AND delete_flg = #{deleteFlg}
+	</update>
+
+	<update id="deleteUpdate">
+		UPDATE t_temporary_pass_storage
+		SET
+			delete_flg = #{deleteFlg},
+			last_modified_user = #{lastModifiedUser},
+			last_modified_date = #{lastModifiedDate}
+		WHERE temporary_pass_storage_id = #{temporaryPassStorageId} 
+			AND delete_flg = 0
+	</update>
+
+	<select id="findByChangeKey" resultType="jp.co.sss.lms.entity.TTemporaryPassStorage">
+		SELECT * 
+		FROM t_temporary_pass_storage 
+		WHERE change_key = #{key} 
+			AND delete_flg = #{deleteFlg}
+	</select>
+
+</mapper>

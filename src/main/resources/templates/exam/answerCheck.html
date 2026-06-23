@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	th:replace="~{/common/layout :: layout(~{::title},~{::body/content()})}">
+<head>
+<meta charset="UTF-8">
+<title>[[${examQuestionForm.examName}]] | LMS</title>
+</head>
+<body>
+
+	<div id="examBeing" th:object="${examQuestionForm}">
+
+		<script th:src="@{/js/examQuestion.js}"></script>
+		<script th:inline="javascript">
+			const limitTimeMin = /*[[*{limitTime}]]*/limitTime;
+			let timeMSec = /*[[*{time}]]*/time;
+		</script>
+	
+		<h2>
+			[[*{examName}]] 
+			<small id="remainTime"></small>
+		</h2>
+	
+		<div th:each="questionDto, stat : *{questionDtoList}" class="panel panel-default">
+			<div class="panel-heading">第[[${stat.count}]]問&nbsp;【[[${questionDto.genreDetailName}]]】</div>
+			<div class="panel-body" th:classappend="*{answer[__${stat.index}__] == null} ? bg-warning : ''">
+				<p class="question">[[${questionDto.question}]]</p>
+				<h6>あなたの回答</h6>
+				<div>
+					<strong th:if="*{answer[__${stat.index}__] == null}" class="text-warning">*&nbsp;回答が入力されていません。</strong>
+					<th:block th:if="*{answer[__${stat.index}__] != null}">[[*{answer[__${stat.index}__]}]].
+						<span class="ib question">[[${questionDto.answerList[examQuestionForm.answer[stat.index]-1]}]]</span>
+					</th:block>
+				</div>
+			</div>
+		</div>
+
+		<div class="well bs-component">
+			<fieldset>
+				<form th:method="post" th:action="@{/exam/question}" class="ib">
+					<input type="submit" value="戻る" class="btn btn-primary" />
+					<input type="hidden" th:name="examId" th:value="*{examId}" />
+					<input type="hidden" th:name="sectionId" th:value="*{sectionId}" />
+					<input type="hidden" th:name="examSectionId" th:value="*{examSectionId}" />
+					<input type="hidden" th:each="answer, st1 : *{answer}" th:name="|answer[${st1.index}]|" th:value="${answer}" />
+					<input type="hidden" th:name="time" class="sendTime" />
+				</form>
+				<form th:method="post" th:action="@{/exam/result}" class="ib ml10" id="examQuestionForm">
+					<button class="btn btn-primary" id="sendButton">回答を送信する</button>
+					<input type="hidden" th:name="examId" th:value="*{examId}" />
+					<input type="hidden" th:name="sectionId" th:value="*{sectionId}" />
+					<input type="hidden" th:name="examSectionId" th:value="*{examSectionId}" />
+					<input type="hidden" th:each="answer, st2 : *{answer}" th:name="|answer[${st2.index}]|" th:value="${answer}" />
+					<input type="hidden" th:name="time" class="sendTime" />
+				</form>
+			</fieldset>
+		</div>
+
+	</div>
+
+</body>
+</html>

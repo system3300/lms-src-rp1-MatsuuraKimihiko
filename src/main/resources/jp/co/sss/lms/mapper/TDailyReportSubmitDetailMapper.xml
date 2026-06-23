@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.co.sss.lms.mapper.TDailyReportSubmitDetailMapper">
+
+	<select id="getCountByDailyReportSubmitId" resultType="Integer">
+		SELECT count(*) 
+		FROM t_daily_report_submit_detail
+		WHERE daily_report_submit_id = #{dailyReportSubmitId};
+	</select>
+
+	<delete id="delete">
+		DELETE FROM t_daily_report_submit_detail
+		WHERE daily_report_submit_id = #{dailyReportSubmitId};
+	</delete>
+
+	<insert id="insert" parameterType="jp.co.sss.lms.entity.TDailyReportSubmitDetail" useGeneratedKeys="true" keyProperty="dailyReportSubmitDetailId">
+		INSERT INTO t_daily_report_submit_detail 
+		(
+			daily_report_submit_id,
+			field_num,
+			content,
+			account_id,
+			delete_flg,
+			first_create_user,
+			first_create_date,
+			last_modified_user,
+			last_modified_date
+		) VALUES (
+			#{dailyReportSubmitId},
+			#{fieldNum},
+			#{content},
+			#{accountId},
+			#{deleteFlg},
+			#{firstCreateUser},
+			#{firstCreateDate},
+			#{lastModifiedUser},
+			#{lastModifiedDate}
+		)
+	</insert>
+
+</mapper>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="jp.co.sss.lms.mapper.MPlaceMapper">
+
+	<!-- 会場取得（会場ID） -->
+	<select id="findByPlaceId"
+		resultType="jp.co.sss.lms.entity.MPlace">
+
+		SELECT
+		*
+		FROM
+		m_place
+		WHERE
+		place_id = #{placeId}
+		AND hidden_flg
+		= #{hiddenFlg}
+		AND delete_flg = #{deleteFlg}
+
+	</select>
+	<select id="getUserAttendanceDto"
+		resultType="jp.co.sss.lms.dto.UserAttendanceDto">
+
+		SELECT
+		t1.place_id AS placeId,
+		t3.lms_user_id AS lmsUserId,
+		t4.user_name AS userName,
+		t6.course_id AS courseId,
+		t6.course_name AS courseName,
+		t9.company_attendance_id AS companyAttendanceId,
+		t8.student_attendance_id AS studentAttendanceId,
+		t7.date AS trainingDate,
+		t8.training_start_time AS trainingStartTime,
+		t8.training_end_time AS trainingEndTime,
+		t8.blank_time AS blankTime,
+		t8.status AS status,
+		t8.note AS note
+		FROM m_place t1
+		INNER JOIN t_user_place t2
+		ON t1.place_id = t2.place_id
+		INNER JOIN m_lms_user t3
+		ON t2.lms_user_id = t3.lms_user_id
+		INNER JOIN m_user t4
+		ON t3.user_id = t4.user_id
+		INNER JOIN t_course_user t5
+		ON t3.lms_user_id = t5.lms_user_id
+		INNER JOIN m_course t6
+		ON t5.course_id = t6.course_id
+		INNER JOIN m_section t7
+		ON t6.course_id = t7.course_id
+
+		LEFT JOIN t_student_attendance t8
+		ON t3.lms_user_id = t8.lms_user_id
+		AND t7.date = t8.training_date
+		AND t8.training_date BETWEEN #{from} AND #{to}
+
+		LEFT JOIN t_company_attendance t9
+		ON t3.lms_user_id = t9.lms_user_id
+		AND t7.date = t9.training_date
+		AND t9.delete_flg = #{deleteFlg}
+
+		WHERE t1.place_id = #{placeId}
+		AND t1.delete_flg = #{deleteFlg}
+		AND t3.role = '0001'
+		AND t7.date BETWEEN #{from} AND #{to}
+
+		ORDER BY t7.date ASC, t3.lms_user_id ASC
+	</select>
+</mapper>

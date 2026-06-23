@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.co.sss.lms.mapper.MSectionMapper">
+
+	<resultMap type="jp.co.sss.lms.dto.SectionServiceSectionDto" id="sectionDetail">
+		<id column="section_id" property="sectionId" />
+		<result column="section_name" property="sectionName" />
+		<result column="section_description" property="sectionDescription" />
+		<result column="course_id" property="courseId" />
+		<result column="date" property="date" />
+		<collection property="fileDtoList" ofType="jp.co.sss.lms.dto.SectionServiceFileDto">
+			<result column="file_id" property="fileId" />
+			<result column="file_name" property="fileName" />
+			<result column="file_path" property="filePath" />
+		</collection>
+		<collection property="examDtoList" ofType="jp.co.sss.lms.dto.SectionServiceExamDto">
+			<result column="exam_section_id" property="examSectionId" />
+			<result column="exam_id" property="examId" />
+			<result column="exam_name" property="examName" />
+			<result column="genre_id" property="genreId" />
+			<result column="public_date" property="publicDate" />
+			<result column="public_flg" property="publicFlg" />
+			<result column="section_id" property="sectionId" />
+			<result column="course_id" property="courseId" />
+		</collection>
+		<collection property="reportDtoList" ofType="jp.co.sss.lms.dto.SectionServiceDailyReportDto">
+			<result column="daily_report_id" property="dailyReportId" />
+			<result column="daily_report_submit_id" property="dailyReportSubmitId" />
+			<result column="report_name" property="reportName" />
+			<result column="date" property="date" />
+		</collection>
+		<collection property="deliverablesDtoList" ofType="jp.co.sss.lms.dto.SectionServiceDeliverablesSectionDto">
+			<result column="deliverables_section_id" property="deliverablesSectionId" />
+			<result column="submission_deadline" property="submissionDeadline" />
+			<association property="deliverablesDto" javaType="jp.co.sss.lms.dto.SectionServiceDeliverablesDto">
+				<result column="deliverables_id" property="deliverablesId" />
+				<result column="deliverables_name" property="deliverablesName" />
+			</association>
+		</collection>
+	</resultMap>
+	<select id="getSectionDetail" resultMap="sectionDetail">
+		SELECT
+			t1.section_id,
+			t1.section_name,
+			t1.section_description,
+			t1.course_id,
+			t1.date,
+			t3.file_id,
+			t3.file_name,
+			t3.file_path,
+			t4.exam_section_id,
+			t5.exam_id,
+			t5.exam_name,
+			t5.genre_id,
+			t4.public_date,
+			CASE WHEN t4.public_date<![CDATA[ < ]]>CURRENT_TIMESTAMP THEN 'true' ELSE 'false' END AS public_flg,
+			t7.daily_report_id,
+			t8.daily_report_submit_id,
+			t7.report_name,
+			t9.deliverables_section_id,
+			t9.submission_deadline,
+			t10.deliverables_id,
+			t10.deliverables_name
+		FROM m_section t1
+			LEFT OUTER JOIN t_file_section t2 ON t2.section_id = t1.section_id
+			LEFT OUTER JOIN m_file t3 ON t3.file_id = t2.file_id
+			LEFT OUTER JOIN t_exam_section t4 ON t1.section_id = t4.section_id AND T4.delete_flg = #{deleteFlg}
+			LEFT OUTER JOIN m_exam t5 ON t4.exam_id = t5.exam_id AND t5.delete_flg = #{deleteFlg}
+			LEFT OUTER JOIN t_course_daily_report t6 ON t1.course_id = t6.course_id
+			LEFT OUTER JOIN m_daily_report t7 ON t6.daily_report_id = t7.daily_report_id
+			LEFT OUTER JOIN t_daily_report_submit t8 ON t8.date = t1.date AND t8.lms_user_id = #{lmsUserId} 
+				AND t7.daily_report_id = t8.daily_report_id AND t8.delete_flg = #{deleteFlg}
+			LEFT OUTER JOIN t_deliverables_section t9 ON t1.section_id = t9.section_id AND t9.delete_flg = #{deleteFlg}
+			LEFT OUTER JOIN m_deliverables t10 ON t9.deliverables_id = t10.deliverables_id AND t10.delete_flg = #{deleteFlg}
+		WHERE t1.section_id = #{sectionId}
+			AND t1.account_id = #{accountId}
+			AND t1.delete_flg = #{deleteFlg}
+	</select>
+
+	<select id="getSectionCount" resultType="Integer">
+		SELECT count(*) FROM m_section
+		WHERE section_id = #{sectionId}
+			AND delete_flg = 0
+	</select>
+
+	<select id="getSectionCountByCourseId" resultType="Integer">
+		SELECT
+			count(*) FROM m_section
+		WHERE course_id = #{courseId} 
+			AND date = #{date}
+	</select>
+
+</mapper>

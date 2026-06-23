@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.co.sss.lms.mapper.TDailyReportSubmitMapper">
+
+	<insert id="insert" parameterType="jp.co.sss.lms.entity.TDailyReportSubmit" useGeneratedKeys="true" keyProperty="dailyReportSubmitId">
+		INSERT INTO t_daily_report_submit
+		(
+			daily_report_id,
+			date,
+			lms_user_id,
+			account_id,
+			delete_flg,
+			first_create_user,
+			first_create_date,
+			last_modified_user,
+			last_modified_date
+		) VALUES (
+			#{dailyReportId},
+			#{date},
+			#{lmsUserId},
+			#{accountId},
+			#{deleteFlg},
+			#{firstCreateUser},
+			#{firstCreateDate},
+			#{lastModifiedUser},
+			#{lastModifiedDate}
+		)
+	</insert>
+
+	<update id="update" parameterType="jp.co.sss.lms.entity.TDailyReportSubmit">
+		UPDATE t_daily_report_submit
+		SET
+			daily_report_id = #{dailyReportId},
+			date = #{date},
+			lms_user_id = #{lmsUserId},
+			account_id = #{accountId},
+			delete_flg = #{deleteFlg},
+			last_modified_user = #{lastModifiedUser},
+			last_modified_date = #{lastModifiedDate}
+		WHERE daily_report_submit_id = #{dailyReportSubmitId}
+	</update>
+
+	<select id="getDailyReportSubmitList" resultType="jp.co.sss.lms.dto.DailyReportDto">
+		SELECT
+			t1.daily_report_submit_id,
+			t1.daily_report_id,
+			t1.date,
+			t1.delete_flg,
+			t2.report_name,
+			COALESCE(t3.fb_count, 0) AS fb_count,
+			t3.last_feedback_date
+		FROM t_daily_report_submit t1
+			LEFT OUTER JOIN m_daily_report t2 ON t2.daily_report_id = t1.daily_report_id
+			LEFT OUTER JOIN (SELECT daily_report_submit_id, COUNT(*) AS fb_count, MAX(last_modified_date) last_feedback_date FROM t_daily_report_fb
+				WHERE delete_flg = #{deleteFlg} GROUP BY daily_report_submit_id) t3 ON t3.daily_report_submit_id = t1.daily_report_submit_id
+		WHERE t1.lms_user_id = #{lmsUserId} 
+			AND t1.delete_flg = #{deleteFlg}
+		ORDER BY t1.date DESC, 
+			t1.daily_report_id DESC
+	</select>
+
+	<resultMap type="jp.co.sss.lms.dto.DailyReportDownloadDto" id="dailyReportDownloadDto">
+		<id column="daily_report_submit_id" property="dailyReportSubmitId" />
+		<result column="daily_report_id" property="dailyReportId" />
+		<result column="file_name" property="fileName" />
+		<result column="sheet_name" property="sheetName" />
+		<result column="company_name" property="companyName" />
+		<result column="row_company" property="rowCompany" />
+		<result column="clm_company" property="clmCompany" />
+		<result column="user_name" property="userName" />
+		<result column="row_user" property="rowUser" />
+		<result column="clm_user" property="clmUser" />
+		<result column="date" property="date" />
+		<result column="row_date" property="rowDate" />
+		<result column="clm_date" property="clmDate" />
+		<result column="row_intel_fld" property="rowIntelFld" />
+		<result column="clm_intel_fld" property="clmIntelFld" />
+		<result column="row_intel" property="rowIntel" />
+		<result column="clm_intel" property="clmIntel" />
+		<collection property="dailyReportDetailDtoList" ofType="jp.co.sss.lms.dto.DailyReportDetailDto">
+			<result column="daily_report_submit_id" property="dailyReportSubmitId" />
+			<result column="field_num" property="fieldNum" />
+			<result column="row" property="row" />
+			<result column="clm" property="clm" />
+			<result column="content" property="content" />
+		</collection>
+		<collection property="intelligibilityDtoList" ofType="jp.co.sss.lms.dto.IntelligibilityDto">
+			<result column="intelligibility_id" property="intelligibilityId" />
+			<result column="field_name" property="fieldName" />
+			<result column="field_value" property="fieldValue" />
+		</collection>
+		<collection property="dailyReportFbDtoList" ofType="jp.co.sss.lms.dto.DailyReportFbDto">
+			<result column="daily_report_fb_id" property="dailyReportFbId" />
+			<result column="fb_user_name" property="userName" />
+			<result column="fb_content" property="content" />
+			<result column="first_create_date" property="date" />
+		</collection>
+	</resultMap>
+	<select id="getDailyReportDownloadDto" resultMap="dailyReportDownloadDto">
+		SELECT
+			t1.daily_report_submit_id,
+			t1.daily_report_id,
+			t2.file_name,
+			t2.sheet_name,
+			t4.company_name,
+			t2.row_company,
+			t2.clm_company,
+			t6.user_name,
+			t2.row_user,
+			t2.clm_user,
+			t1.date,
+			t2.row_date,
+			t2.clm_date,
+			t2.row_intel_fld,
+			t2.clm_intel_fld,
+			t2.row_intel,
+			t2.clm_intel,
+			t7.field_num,
+			t7.row,
+			t7.clm,
+			t8.content,
+			t9.intelligibility_id,
+			t9.field_name,
+			t9.field_value,
+			t10.daily_report_fb_id,
+			t12.user_name AS fb_user_name,
+			t10.content AS
+			fb_content,
+			t10.first_create_date
+		FROM t_daily_report_submit t1
+			LEFT OUTER JOIN m_daily_report t2 ON t2.daily_report_id = t1.daily_report_id
+			LEFT OUTER JOIN t_user_company t3 ON t3.lms_user_id = t1.lms_user_id
+			LEFT OUTER JOIN m_company t4 ON t4.company_id = t3.company_id
+			LEFT OUTER JOIN m_lms_user t5 ON t5.lms_user_id = t1.lms_user_id
+			LEFT OUTER JOIN m_user t6 ON t6.user_id = t5.user_id
+			LEFT OUTER JOIN m_daily_report_detail t7 ON t7.daily_report_id = t1.daily_report_id
+			LEFT OUTER JOIN t_daily_report_submit_detail t8 ON t8.daily_report_submit_id = t1.daily_report_submit_id
+			LEFT OUTER JOIN t_intelligibility t9 ON t9.daily_report_submit_id = t1.daily_report_submit_id
+			LEFT OUTER JOIN t_daily_report_fb t10 ON t10.daily_report_submit_id = t1.daily_report_submit_id
+			LEFT OUTER JOIN m_lms_user t11 ON t11.lms_user_id = t10.lms_user_id
+			LEFT OUTER JOIN m_user t12 ON t12.user_id = t11.user_id
+		WHERE t1.daily_report_submit_id = #{dailyReportSubmitId} 
+			AND t1.daily_report_id = #{dailyReportId} 
+			AND t1.delete_flg = #{deleteFlg}
+	</select>
+
+	<resultMap type="jp.co.sss.lms.dto.DailyReportDto" id="dailyReportDto">
+		<id column="daily_report_id" property="dailyReportId" />
+		<result column="daily_report_submit_id" property="dailyReportSubmitId" />
+		<result column="date" property="date" />
+		<result column="user_name" property="userName" />
+		<result column="report_name" property="reportName" />
+		<result column="intelligibility_flg" property="intelligibilityFlg" />
+		<result column="intelligibility_field_num" property="intelligibilityFieldNum" />
+		<result column="intelligibility_num" property="intelligibilityNum" />
+		<collection property="dailyReportDetailDtoList" ofType="jp.co.sss.lms.dto.DailyReportDetailDto">
+			<result column="field_name" property="fieldName" />
+			<result column="required_flg" property="requiredFlg" />
+			<result column="input_type" property="inputType" />
+			<result column="range_from" property="rangeFrom" />
+			<result column="range_to" property="rangeTo" />
+			<result column="content" property="content" />
+		</collection>
+		<collection property="intelligibilityDtoList" ofType="jp.co.sss.lms.dto.IntelligibilityDto">
+			<result column="intelligibility_id" property="intelligibilityId" />
+			<result column="intelligibility_field_name" property="fieldName" />
+			<result column="field_value" property="fieldValue" />
+		</collection>
+		<collection property="dailyReportFbDtoList" ofType="jp.co.sss.lms.dto.DailyReportFbDto">
+			<result column="daily_report_fb_id" property="dailyReportFbId" />
+			<result column="fb_lms_user_id" property="lmsUserId" />
+			<result column="fb_user_name" property="userName" />
+
+			<result column="fb_content" property="content" />
+			<result column="first_create_date" property="firstCreateDate" />
+			<result column="last_modified_date" property="date" />
+		</collection>
+	</resultMap>
+	<select id="getDailyReportDto" resultMap="dailyReportDto">
+		SELECT
+			t1.daily_report_id,
+			t1.daily_report_submit_id,
+			t1.date,
+			t3.user_name,
+			t5.report_name,
+			t5.intelligibility_flg,
+			t5.intelligibility_field_num,
+			t5.intelligibility_num,
+			t6.field_name,
+			t6.required_flg,
+			t6.input_type,
+			t6.range_from,
+			t6.range_to,
+			t4.content,
+			t7.intelligibility_id,
+			t7.field_name AS intelligibility_field_name,
+			t7.field_value,
+			t8.daily_report_fb_id,
+			t9.lms_user_id AS fb_lms_user_id,
+			t10.user_name AS fb_user_name,
+			t8.content AS fb_content,
+			t8.first_create_date,
+			t8.last_modified_date
+		FROM t_daily_report_submit t1
+			LEFT OUTER JOIN m_lms_user t2 ON t2.lms_user_id = t1.lms_user_id
+			LEFT OUTER JOIN m_user t3 ON t3.user_id = t2.user_id
+			LEFT OUTER JOIN t_daily_report_submit_detail t4 ON t4.daily_report_submit_id = t1.daily_report_submit_id AND t4.delete_flg = #{deleteFlg}
+			LEFT OUTER JOIN m_daily_report t5 ON t5.daily_report_id = t1.daily_report_id
+			LEFT OUTER JOIN m_daily_report_detail t6 ON t6.daily_report_id = t1.daily_report_id AND t6.field_num = t4.field_num
+			LEFT OUTER JOIN t_intelligibility t7 ON t7.daily_report_submit_id = t1.daily_report_submit_id AND t7.delete_flg = #{deleteFlg}
+			LEFT OUTER JOIN t_daily_report_fb t8 ON t8.daily_report_submit_id = t1.daily_report_submit_id AND t8.delete_flg = #{deleteFlg}
+			LEFT OUTER JOIN m_lms_user t9 ON t9.lms_user_id = t8.lms_user_id
+			LEFT OUTER JOIN m_user t10 ON t10.user_id = t9.user_id
+		WHERE t1.daily_report_submit_id = #{dailyReportSubmitId}
+			AND t1.delete_flg = #{deleteFlg}
+		ORDER BY t8.daily_report_fb_id ASC
+	</select>
+
+</mapper>

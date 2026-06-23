@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	th:replace="~{common/error-layout :: layout(~{::title},~{::body/content()})}">
+<head>
+<meta charset="UTF-8" />
+<title>不正アクセス画面</title>
+</head>
+<body>
+
+	<h2>不正アクセス</h2>
+
+	<h4>不正なアクセスが検出されました。以下の行為が考えられます。</h4>
+	<ul>
+		<li>登録ボタンの2度押し</li>
+		<li>URL直打ちによるアクセス</li>
+		<li>データの不正改ざん</li>
+	</ul>
+
+</body>
+</html>

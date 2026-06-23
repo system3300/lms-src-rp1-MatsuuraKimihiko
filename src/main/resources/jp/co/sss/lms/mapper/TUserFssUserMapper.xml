@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.co.sss.lms.mapper.TUserFssUserMapper">
+
+	<select id="getCount" resultType="Integer">
+		SELECT COUNT(*) 
+		FROM t_user_fss_user t1
+			INNER JOIN m_fss_user t2 ON t2.fss_user_id = t1.fss_user_id
+			INNER JOIN t_fss_user_group t3 ON t3.fss_user_id = t2.fss_user_id AND t3.auth = #{auth}
+		WHERE t1.user_id = #{userId} 
+			AND t1.delete_flg = #{deleteFlg}
+	</select>
+
+	<select id="getFssUserId" resultType="Integer">
+		SELECT fss_user_id 
+		FROM t_user_fss_user
+		WHERE user_id = #{userId} 
+			AND delete_flg = #{deleteFlg}
+	</select>
+
+</mapper>

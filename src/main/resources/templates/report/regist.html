@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{/common/layout :: layout(~{::title},~{::body/content()})}">
+<head>
+<meta charset="UTF-8">
+<title>レポート登録 | LMS</title>
+</head>
+<body>
+	
+	<th:block th:object="${dailyReportSubmitForm}">
+
+		<h2>[[*{reportName}]] <small> [[*{#dates.format(date, "yyyy年M月d日")}]]</small></h2>
+	
+		<form th:action="@{/report/complete}" method="post" class="form-horizontal">
+	
+			<div class="well bs-component" th:if="*{intelligibilityFlg} == 1">
+				<fieldset>
+					<legend> 学習理解度 </legend>
+					<div class="form-group" th:each="i : *{#numbers.sequence(0, intelligibilityFieldNum-1)}">
+						<label for="intFieldName_${i}" class="col-sm-2 control-label">学習項目</label>
+						<div class="col-sm-6">
+							<input type="text" th:id="|intFieldName_${i}|" th:name="|intFieldNameArray[${i}]|" class="form-control" 
+								th:value="*{intFieldNameArray[__${i}__]}" th:errorclass="errorInput" maxlength="100"  />
+						</div>
+						<label for="intFieldValue_${i}" class="col-sm-1 control-label">理解度</label>
+						<div class="col-sm-2">
+							<select class="form-control" th:id="|intFieldValue_${i}|" th:name="|intFieldValueArray[${i}]|" th:errorclass="errorInput">
+								<option value=""></option>
+								<option th:each="j : *{#numbers.sequence(1, intelligibilityNum)}" th:name="|intFieldValue_$[i]|"
+									th:value="${j}" th:selected="*{intFieldValueArray[__${i}__]} == ${j}">[[${j}]]</option>
+							</select>
+						</div>
+					</div>
+				</fieldset>
+			</div>
+			
+			<div class="well bs-component">
+				<fieldset>
+					<legend>報告レポート</legend>
+					<div th:each="fieldName, stat : *{fieldNameArray}" class="form-group">
+						<label class="col-lg-2 control-label">
+							[[${fieldName}]] 
+							<span th:if="*{requiredFlgArray[__${stat.index}__]} == '1'"> <br /> 
+							<strong class="text-caution"><font size="2">[必須]</font></strong>
+						</span>
+						</label>
+						<input type="hidden" class="index" th:value="${stat.index}" />
+						<input type="hidden" th:name="|fieldNameArray[${stat.index}]|" th:value="${fieldName}" />
+						<input type="hidden" th:name="|requiredFlgArray[${stat.index}]|" th:value="*{requiredFlgArray[__${stat.index}__]}" />
+						<input type="hidden" th:id="|type_${stat.index}|" th:name="|inputTypeArray[${stat.index}]|" th:value="*{inputTypeArray[__${stat.index}__]}" />
+						<input type="hidden" th:id="|rangeFrom_${stat.index}|" th:name="|rangeFromArray[${stat.index}]|" th:value="*{rangeFromArray[__${stat.index}__]}" />
+						<input type="hidden" th:id="|rangeTo_${stat.index}|" th:name="|rangeToArray[${stat.index}]|" th:value="*{rangeToArray[__${stat.index}__]}" />
+						<div class="col-lg-10">
+							<textarea class="form-control" rows="3" th:id="|content_${stat.index}|" th:name="|contentArray[${stat.index}]|" 
+								th:errorclass="errorInput">[[*{contentArray[__${stat.index}__]}]]</textarea>
+						</div>
+					</div>
+				</fieldset>
+			</div>
+	
+			<div class="well bs-component">
+				<fieldset>
+					<div class="form-group">
+						<div class="col-lg-10 col-lg-offset-2">
+							<button type="submit" class="btn btn-primary">提出する</button>
+						</div>
+						<input type="hidden" name="dailyReportId" th:value="*{dailyReportId}" />
+						<input type="hidden" name="sectionId" th:value="*{sectionId}" />
+						<input type="hidden" name="courseId" th:value="*{courseId}" />
+						<input type="hidden" name="dailyReportSubmitId" th:value="*{dailyReportSubmitId}" />
+						<input type="hidden" name="date" th:value="*{#dates.format(date, 'yyyy/M/d' )}" />
+						<input type="hidden" name="lmsUserId" th:value="*{lmsUserId}" />
+						<input type="hidden" name="reportName" th:value="*{reportName}" />
+						<input type="hidden" name="intelligibilityFlg" th:value="*{intelligibilityFlg}" />
+						<input type="hidden" name="intelligibilityFieldNum" th:value="*{intelligibilityFieldNum}" />
+						<input type="hidden" name="intelligibilityNum" th:value="*{intelligibilityNum}" />
+					</div>
+				</fieldset>
+			</div>
+	
+		</form>
+	</th:block>
+
+	<script>
+		$(function() {
+			$(".index").each(function() {
+					var index = $(this).val();
+					if ($("#type_" + index).val() == "0") {
+						$('#content_' + index).attr('placeholder', '例） 半角数字で、'
+							+ $("#rangeFrom_" + index).val() + '～' + $("#rangeTo_" + index).val()
+							+ 'の範囲で入力してください。');
+					}
+				});
+		});
+	</script>
+
+</body>
+</html>
