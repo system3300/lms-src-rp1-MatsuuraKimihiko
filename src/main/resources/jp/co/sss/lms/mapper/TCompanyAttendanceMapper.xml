@@ -3,51 +3,59 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="jp.co.sss.lms.mapper.TCompanyAttendanceMapper">
 
-    <select id="findByCompanyAttendanceId" resultType="jp.co.sss.lms.entity.TCompanyAttendance">
-        SELECT *
-        FROM t_company_attendance
-        WHERE company_attendance_id = #{companyAttendanceId}
-        AND delete_flg = #{deleteFlg}
-    </select>
+	<select id="findByCompanyAttendanceId"
+		resultType="jp.co.sss.lms.entity.TCompanyAttendance">
+		SELECT *
+		FROM t_company_attendance
+		WHERE company_attendance_id = #{companyAttendanceId}
+		AND delete_flg = #{deleteFlg}
+	</select>
 
-    <insert id="insert">
-        INSERT INTO t_company_attendance (
-            lms_user_id,
-            training_date,
-            training_start_time,
-            training_end_time,
-            status,
-            account_id,
-            delete_flg,
-            first_create_user,
-            first_create_date,
-            last_modified_user,
-            last_modified_date
-        )
-        VALUES (
-            #{lmsUserId},
-            #{trainingDate},
-            #{trainingStartTime},
-            #{trainingEndTime},
-            #{status},
-            #{accountId},
-            #{deleteFlg},
-            #{firstCreateUser},
-            #{firstCreateDate},
-            #{lastModifiedUser},
-            #{lastModifiedDate}
-        )
-    </insert>
+	<insert id="insert">
+		INSERT INTO t_company_attendance (
+		lms_user_id,
+		training_date,
+		training_start_time,
+		training_end_time,
+		status,
+		account_id,
+		delete_flg,
+		first_create_user,
+		first_create_date,
+		last_modified_user,
+		last_modified_date
+		)
+		VALUES (
+		#{lmsUserId},
+		#{trainingDate},
+		#{trainingStartTime},
+		#{trainingEndTime},
+		#{status},
+		#{accountId},
+		#{deleteFlg},
+		#{firstCreateUser},
+		#{firstCreateDate},
+		#{lastModifiedUser},
+		#{lastModifiedDate}
+		)
+	</insert>
 
-    <update id="update">
-        UPDATE t_company_attendance
-        SET
-            training_start_time = #{trainingStartTime},
-            training_end_time = #{trainingEndTime},
-            status = #{status},
-            last_modified_user = #{lastModifiedUser},
-            last_modified_date = #{lastModifiedDate}
-        WHERE company_attendance_id = #{companyAttendanceId}
-    </update>
-
+	<update id="update">
+		UPDATE t_company_attendance
+		SET
+		training_start_time = #{trainingStartTime},
+		training_end_time = #{trainingEndTime},
+		status = #{status},
+		last_modified_user = #{lastModifiedUser},
+		last_modified_date = #{lastModifiedDate}
+		WHERE company_attendance_id = #{companyAttendanceId}
+	</update>
+	<select id="findByLmsUserIdAndTrainingDateAndDeleteFlg"
+		resultType="jp.co.sss.lms.entity.TCompanyAttendance">
+		SELECT *
+		FROM t_company_attendance
+		WHERE lms_user_id = #{lmsUserId}
+		AND training_date = #{trainingDate}
+		AND delete_flg = #{deleteFlg}
+	</select>
 </mapper>

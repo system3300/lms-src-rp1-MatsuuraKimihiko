@@ -17,6 +17,8 @@ public class AttendanceStudentDto {
 	private String companyName;
 
 	private String placeName;
+
+	private Integer courseId;
 	private boolean notEnterFlg;
 
 	private Integer notEnterCount;

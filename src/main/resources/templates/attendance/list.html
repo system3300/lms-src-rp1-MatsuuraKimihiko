@@ -1,195 +1,174 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
-	th:replace="~{/common/layout :: layout(~{::title},~{::body/content()})}">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{/common/layout :: layout(~{::title},~{::body/content()})}">
+
 <head>
-<meta charset="UTF-8">
+	<meta charset="UTF-8">
 
-  
 
-  <title>勤怠情報確認 | LMS</title>
+
+	<title>勤怠情報確認 | LMS</title>
 
 </head>
 
 <body>
-  
-    <div class="container">
 
-      <div id="contents" class="clearfix">
-        <div id="main" class="main2clm">
+	<div class="container">
 
-          <h2>勤怠情報確認<small>（受講生一覧）</small></h2>
+		<div id="contents" class="clearfix">
+			<div id="main" class="main2clm">
 
-		  <div class="well bs-component">
-		      <form th:object="${attendanceStudentListForm}"
-		            method="post"
-		            th:action="@{/attendance/list}"
-		            class="form-horizontal">
+				<h2>勤怠情報確認<small>（受講生一覧）</small></h2>
 
-		          <fieldset>
-		              <legend>検索</legend>
+				<div class="well bs-component">
+					<form th:object="${attendanceStudentListForm}" method="post" th:action="@{/attendance/list}"
+						class="form-horizontal">
 
-		              <!-- コース名 -->
-		              <div class="form-group" th:if="${isTeacher}">
-		                  <label for="courseId" class="col-lg-2 control-label">
-		                      コース名
-		                  </label>
-		                  <div class="col-lg-10">
-		                      <select id="courseId"
-							          th:field="*{courseId}"
-		                              class="form-control">
-		                          <option value="">選択してください</option>
-		                          <option th:each="course : ${courseList}"
-		                                  th:value="${course.courseId}"
-		                                  th:text="${course.courseName}">
-		                          </option>
-		                      </select>
-		                  </div>
-		              </div>
+						<fieldset>
+							<legend>検索</legend>
 
-		              <!-- 会場名 -->
-		              <div class="form-group" th:if="${isTeacher}">
-		                  <label for="placeName" class="col-lg-2 control-label">
-		                      会場名
-		                  </label>
-		                  <div class="col-lg-10">
-		                      <input type="text"
-		                             id="placeName"
-		                             class="form-control"
-		                             th:value="${placeName}"
-		                             readonly>
-		                  </div>
-		              </div>
+							<!-- コース名 -->
+							<div class="form-group" th:if="${isTeacher}">
+								<label for="courseId" class="col-lg-2 control-label">
+									コース名
+								</label>
+								<div class="col-lg-10">
+									<select id="courseId" th:field="*{courseId}" class="form-control">
+										<option value="">選択してください</option>
+										<option th:each="course : ${courseList}" th:value="${course.courseId}"
+											th:text="${course.courseName}">
+										</option>
+									</select>
+								</div>
+							</div>
 
-		              <!-- 企業名 -->
-		              <div class="form-group" th:if="${isTeacher}">
-		                  <label for="companyId" class="col-lg-2 control-label">
-		                      企業名
-		                  </label>
-		                  <div class="col-lg-10">
-		                      <select id="companyId"
-							          th:field="*{companyId}"
-		                              class="form-control">
-		                          <option value="">選択してください</option>
-		                          <option th:each="company : ${companyList}"
-		                                  th:value="${company.companyId}"
-		                                  th:text="${company.companyName}">
-		                          </option>
-		                      </select>
-		                  </div>
-		              </div>
+							<!-- 会場名 -->
+							<div class="form-group" th:if="${isTeacher}">
+								<label for="placeName" class="col-lg-2 control-label">
+									会場名
+								</label>
+								<div class="col-lg-10">
+									<input type="text" id="placeName" class="form-control" th:value="${placeName}"
+										readonly>
+								</div>
+							</div>
 
-		              <!-- ユーザー名 -->
-		              <div class="form-group">
-		                  <label for="userName" class="col-lg-2 control-label">
-		                      ユーザー名
-		                  </label>
-		                  <div class="col-lg-10">
-		                      <input type="text"
-		                             id="userName"
-		                             name="userName"
-		                             class="form-control"
-		                             th:value="${userName}">
-		                  </div>
-		              </div>
+							<!-- 企業名 -->
+							<div class="form-group" th:if="${isTeacher}">
+								<label for="companyId" class="col-lg-2 control-label">
+									企業名
+								</label>
+								<div class="col-lg-10">
+									<select id="companyId" th:field="*{companyId}" class="form-control">
+										<option value="">選択してください</option>
+										<option th:each="company : ${companyList}" th:value="${company.companyId}"
+											th:text="${company.companyName}">
+										</option>
+									</select>
+								</div>
+							</div>
 
-		              <!-- 検索ボタン -->
-		              <div class="form-group">
-						<div class="col-lg-2"> </div>
-						 <div class="col-lg-10"> 						
-							<input type="checkbox"
-							       id="pastFlg"
-							       name="pastFlg"
-							       th:checked="${attendanceStudentListForm.pastFlg == 1}"
-							       value="1"
-							       class="icon-checkbox"
-								   th:if="${isCompany}">
-						       <label for="pastFlg" class="text-info" th:if="${isCompany}"> 
-								<span class="glyphicon glyphicon-unchecked unchecked"></span> 
-								<span class="glyphicon glyphicon-check checked"></span> </label> 
-								<label for="pastFlg" class="control-label" th:if="${isCompany}">コース終了後 [[${pastTimeLabel}]] を経過した受講生</label>
-								<label class="text-danger" th:if="${isCompany}">　※コース終了後 [[${pastTimeLabel}]] を経過した受講生を含めて検索します</label> </div>
-		                  <div class="col-lg-10 col-lg-offset-2">
-		                      <input type="submit"
-		                             name="search"
-		                             value="検索"
-		                             class="btn btn-primary">
-		                  </div>
-		              </div>
+							<!-- ユーザー名 -->
+							<div class="form-group">
+								<label for="userName" class="col-lg-2 control-label">
+									ユーザー名
+								</label>
+								<div class="col-lg-10">
+									<input type="text" id="userName" name="userName" class="form-control"
+										th:value="${userName}">
+								</div>
+							</div>
 
-		          </fieldset>
-		      </form>
-		  </div>
+							<!-- 検索ボタン -->
+							<div class="form-group">
+								<div class="col-lg-2"> </div>
+								<div class="col-lg-10">
+									<input type="checkbox" id="pastFlg" name="pastFlg"
+										th:checked="${attendanceStudentListForm.pastFlg == 1}" value="1"
+										class="icon-checkbox" th:if="${isCompany}">
+									<label for="pastFlg" class="text-info" th:if="${isCompany}">
+										<span class="glyphicon glyphicon-unchecked unchecked"></span>
+										<span class="glyphicon glyphicon-check checked"></span> </label>
+									<label for="pastFlg" class="control-label" th:if="${isCompany}">コース終了後
+										[[${pastTimeLabel}]] を経過した受講生</label>
+									<label class="text-danger" th:if="${isCompany}">　※コース終了後 [[${pastTimeLabel}]]
+										を経過した受講生を含めて検索します</label>
+								</div>
+								<div class="col-lg-10 col-lg-offset-2">
+									<input type="submit" name="search" value="検索" class="btn btn-primary">
+								</div>
+							</div>
 
-		  <div id="DataTables_Table_0_wrapper"
-		       class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+						</fieldset>
+					</form>
+				</div>
 
-		      <div class="row">
-		          <div class="col-sm-12">
-		              <table class="table table-hover sortabletable dataTable no-footer">
-		                  <thead>
-		                      <tr>
-		                          <th>ユーザーID</th>
-		                          <th>ユーザー名</th>
-		                          <th>コース名</th>
-		                          <th>企業名</th>
-		                          <th>会場</th>
-		                          <th style="width:180px;">勤怠</th>
-		                      </tr>
-		                  </thead>
+				<div id="DataTables_Table_0_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
 
-		                  <tbody>
-		                      <tr th:each="student : ${studentList}">
-		                          <td th:text="${student.userId}"></td>
-		                          <td th:text="${student.userName}"></td>
-		                          <td th:text="${student.courseName}"></td>
-		                          <td th:text="${student.companyName}"></td>
-		                          <td th:text="${student.placeName}"></td>
+					<div class="row">
+						<div class="col-sm-12">
+							<table class="table table-hover sortabletable dataTable no-footer">
+								<thead>
+									<tr>
+										<th>ユーザーID</th>
+										<th>ユーザー名</th>
+										<th>コース名</th>
+										<th>企業名</th>
+										<th>会場</th>
+										<th style="width:180px;">勤怠</th>
+									</tr>
+								</thead>
 
-		                          <td style="white-space: nowrap;">
-		                              <form method="post"
-		                                    th:action="@{/attendance/detail}"
-											 style="display:inline;">
-		                                  <input type="hidden"
-		                                         name="lmsUserId"
-		                                         th:value="${student.lmsUserId}">
-		                                  <input type="submit"
-		                                         value="勤怠確認"
-		                                         class="btn btn-default">
-												 <span th:if="${student.notEnterFlg and isTeacher}"
-												       class="text-danger"
-												       style="margin-left:10px;"
-													   >
-												未入力あり（[[${student.notEnterCount}]]件）
-							                     </span>												 
-		                              </form>
-		                          </td>
-		                      </tr>
-		                  </tbody>
+								<tbody>
+									<tr th:each="student : ${studentList}">
+										<td th:text="${student.userId}"></td>
+										<td th:text="${student.userName}"></td>
+										<td th:text="${student.courseName}"></td>
+										<td th:text="${student.companyName}"></td>
+										<td th:text="${student.placeName}"></td>
 
-		              </table>
-		          </div>
-		      </div>
-		  </div>
-            <div class="row">
-              <div class="col-sm-5">
-              </div>
-              <div class="col-sm-7">
-                <div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_0_paginate">
-                </div>
-              </div>
-            </div>
-          </div>
+										<td style="white-space: nowrap;">
+											<form method="get" th:action="@{/attendance/detail}"
+												style="display:inline;">
+												<input type="hidden" name="lmsUserId" th:value="${student.lmsUserId}">
+												<input type="hidden" name="courseId" th:value="${student.courseId}">
+												<input type="hidden" name="userName" th:value="${student.userName}">
+												<input type="hidden" name="companyName"th:value="${student.companyName}">
+												<input type="hidden" name="courseName" th:value="${student.courseName}">
+												<input type="hidden" name="placeName" th:value="${student.placeName}">
+												<input type="submit" value="勤怠確認" class="btn btn-default">
+												<span th:if="${student.notEnterFlg and isTeacher}" class="text-danger"
+													style="margin-left:10px;">
+													未入力あり（[[${student.notEnterCount}]]件）
+												</span>
+											</form>
+										</td>
+									</tr>
+								</tbody>
+
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-5">
+					</div>
+					<div class="col-sm-7">
+						<div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_0_paginate">
+						</div>
+					</div>
+				</div>
+			</div>
 
 
-        </div>
-        <!--#main-->
-      </div>
-      <!--#contents-->
-      <form id="screenTransForm" name="screenTransForm" method="post">
-      </form>
-      <div id="push"></div>
-    </div>
-  </div>
+		</div>
+		<!--#main-->
+	</div>
+	<!--#contents-->
+	<form id="screenTransForm" name="screenTransForm" method="post">
+	</form>
+	<div id="push"></div>
+	</div>
+	</div>
 </body>
 
 </html>

@@ -2,6 +2,8 @@ package jp.co.sss.lms.dto;
 
 import java.util.Date;
 
+import org.springframework.stereotype.Component;
+
 import lombok.Data;
 
 /**
@@ -10,6 +12,7 @@ import lombok.Data;
  * @author 東京ITスクール
  */
 @Data
+@Component
 public class UserAttendanceDto {
 
 	/** 会場ID */

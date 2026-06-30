@@ -21,5 +21,8 @@ public class AttendanceManagementDto extends StudentAttendanceDto {
 	private String blankTimeValue;
 	/** セクション名 */
 	private String sectionName;
-
+	/** 状態 */
+	private Short status;
+	/** 状態(表示用) */
+	private String statusName;
 }

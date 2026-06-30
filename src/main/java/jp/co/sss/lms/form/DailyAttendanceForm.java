@@ -46,19 +46,26 @@ public class DailyAttendanceForm {
 	private String courseName;
 	/** インデックス */
 	private String index;
+	/** 備考（画面表示用） */
+	private String noteDisp;
 
 	//松浦公彦 -Task.26
 
+	/** 出勤時間（時）*/
 	private Integer trainingStartTimeHour;
+	/** 出勤時間（分）*/
 	private Integer trainingStartTimeMinute;
+	/** 退勤時間（時）*/
 	private Integer trainingEndTimeHour;
+	/** 退勤時間（分）*/
 	private Integer trainingEndTimeMinute;
-
+	/** 出席フラグ */
 	private Boolean absent;
 	/** 企業入力勤怠情報ID */
 	private Integer companyAttendanceId;
-
+	/** 出勤時間（画面表示用）*/
 	private String trainingStartTimeDisplay;
+	/** 退勤時間（画面表示用）*/
 	private String trainingEndTimeDisplay;
 
 }

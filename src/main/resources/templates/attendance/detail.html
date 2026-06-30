@@ -1,88 +1,161 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
-	th:replace="~{/common/layout :: layout(~{::title},~{::body/content()})}">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{/common/layout :: layout(~{::title},~{::body/content()})}">
+
 <head>
-<meta charset="UTF-8">
-<title>勤怠情報変更｜LMS</title>
+	<meta charset="UTF-8">
+	<title>勤怠情報変更｜LMS</title>
 
 </head>
+
 <body>
-
-	<!-- 完了メッセージ -->
-	<th:block th:if="${not #strings.isEmpty(message)}" id="message">
-		<div class="alert alert-info alert-dismissible fade in" role="alert">
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-				<span aria-hidden="true">×</span>
-			</button>
-			<span>[[${message}]]</span>
-		</div>
-	</th:block>
-
-	<h2>勤怠管理</h2>
-
-	<!-- エラーメッセージ -->
-	<th:block th:if="${not #strings.isEmpty(error)}" id="error">
-		<ul style="padding-left: 0; list-style: none;">
-			<li><span th:text="'*' + '&nbsp' + ${error}" class="help-inline error"></span></li>
-		</ul>
-	</th:block>
-
-	<th:block th:if="${session.loginUserDto.role == '0001'}">
-		<div class="well well-lg p10 mb10">
-			<div class="form-group">
-				<small id="now"></small>
+	<th:block th:if="${isStudent}">
+		<!-- 完了メッセージ -->
+		<th:block th:if="${not #strings.isEmpty(message)}" id="message">
+			<div class="alert alert-info alert-dismissible fade in" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+				<span>[[${message}]]</span>
 			</div>
-			<div class="form-group">
-				<form th:action="@{/attendance/detail}" method="post" class="form-inline">
-					<input type="submit" value="出勤" name="punchIn" class="btn btn-default" />
-					<input type="submit" value="退勤" name="punchOut" class="btn btn-default" />
-				</form>
+		</th:block>
+
+		<h2>勤怠管理</h2>
+
+		<!-- エラーメッセージ -->
+		<th:block th:if="${not #strings.isEmpty(error)}" id="error">
+			<ul style="padding-left: 0; list-style: none;">
+				<li><span th:text="'*' + '&nbsp' + ${error}" class="help-inline error"></span></li>
+			</ul>
+		</th:block>
+
+		<th:block th:if="${session.loginUserDto.role == '0001'}">
+			<div class="well well-lg p10 mb10">
+				<div class="form-group">
+					<small id="now"></small>
+				</div>
+				<div class="form-group">
+					<form th:action="@{/attendance/detail}" method="post" class="form-inline">
+						<input type="submit" value="出勤" name="punchIn" class="btn btn-default" />
+						<input type="submit" value="退勤" name="punchOut" class="btn btn-default" />
+					</form>
+				</div>
+				<p><a th:href="@{/attendance/update}">勤怠情報を直接編集する</a></p>
 			</div>
-			<p><a th:href="@{/attendance/update}">勤怠情報を直接編集する</a></p>
-		</div>
-	</th:block>
+		</th:block>
 
-	<div class="row">
-		<div class="bs-component col-sm-12">
-			<table class="table table-hover dataTable no-footer">
-				<thead class="db">
-					<tr>
-						<th class="w160">日付</th>
-						<th class="w260">コース内容</th>
-						<th class="w80">出勤</th>
-						<th class="w80">退勤</th>
-						<th class="w120">中抜け時間</th>
-						<th class="w120">ステータス</th>
-						<th class="w200">備考</th>
-					</tr>
-				</thead>
-
-				<tbody class="db">
-					<th:block th:each="attendanceManagementDto : ${attendanceManagementDtoList}" th:object="${attendanceManagementDto}">
+		<div class="row">
+			<div class="bs-component col-sm-12">
+				<table class="table table-hover dataTable no-footer">
+					<thead class="db">
 						<tr>
-							<td class="w160">[[*{#dates.format(trainingDate, 'yyyy年M月d日(E)')}]]</td>
-							<td class="w260">[[*{sectionName}]]</td>
-							<td class="w80">[[*{trainingStartTime}]]</td>
-							<td class="w80">[[*{trainingEndTime}]]</td>
-							<td class="w120">[[*{blankTimeValue}]]</td>
-							<td class="w120">[[*{statusDispName}]]</td>
-							<td class="w200">[[*{note}]]</td>
+							<th class="w160">日付</th>
+							<th class="w260">コース内容</th>
+							<th class="w80">出勤</th>
+							<th class="w80">退勤</th>
+							<th class="w120">中抜け時間</th>
+							<th class="w120">ステータス</th>
+							<th class="w200">備考</th>
 						</tr>
-					</th:block>
-				</tbody>
-			</table>
+					</thead>
+
+					<tbody class="db">
+						<th:block th:each="attendanceManagementDto : ${attendanceManagementDtoList}"
+							th:object="${attendanceManagementDto}">
+							<tr>
+								<td class="w160">[[*{#dates.format(trainingDate, 'yyyy年M月d日(E)')}]]</td>
+								<td class="w260">[[*{sectionName}]]</td>
+								<td class="w80">[[*{trainingStartTime}]]</td>
+								<td class="w80">[[*{trainingEndTime}]]</td>
+								<td class="w120">[[*{blankTimeValue}]]</td>
+								<td class="w120">[[*{statusDispName}]]</td>
+								<td class="w200">[[*{note}]]</td>
+							</tr>
+						</th:block>
+					</tbody>
+				</table>
+			</div>
 		</div>
-	</div>
-    <!-- 松浦公彦 -Task.25- -->
+	</th:block>
+	<th:block th:unless="${isStudent}">
+		<div id="wrap">
+
+			<div class="container">
+
+				<div id="contents" class="clearfix">
+					<div id="main" class="main2clm">
+
+						<h2>勤怠管理</h2>
+
+						<h3>受講生情報</h3>
+						<table class="table table-hover wh">
+							<tbody>
+								<tr>
+									<th>ユーザー名</th>
+									<td th:text="${attendanceStudentListForm.userName}"></td>
+								</tr>
+								<tr>
+									<th>企業名</th>
+									<td th:text="${attendanceStudentListForm.companyName}"></td>
+								</tr>
+								<tr>
+									<th>コース名</th>
+									<td th:text="${attendanceStudentListForm.courseName}"></td>
+								</tr>
+								<tr>
+									<th>会場名</th>
+									<td th:text="${attendanceStudentListForm.placeName}"></td>
+								</tr>
+							</tbody>
+						</table>
+
+						<h3>勤怠情報</h3>
+
+						<div class="row">
+							<div class="bs-component col-sm-12">
+								<table class="table table-hover dataTable no-footer">
+									<thead>
+										<tr>
+											<th style="width: 160px;">日付</th>
+											<th>コース内容</th>
+											<th style="width: 70px;">出勤</th>
+											<th style="width: 70px;">退勤</th>
+											<th style="width: 120px;">中抜け時間</th>
+											<th style="width: 120px;">ステータス</th>
+											<th>備考</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="dto : ${attendanceManagementDtoList}">
+											<td th:text="${#dates.format(dto.trainingDate, 'yyyy年M月d日(E)')}"></td>
+											<td th:text="${dto.sectionName}"></td>
+											<td th:text="${dto.trainingStartTime}"></td>
+											<td th:text="${dto.trainingEndTime}"></td>
+											<td th:text="${dto.blankTimeValue}"></td>
+											<td th:text="${dto.statusName}"></td>
+											<td th:text="${dto.note}"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+
+					<form id="screenTransForm" name="screenTransForm" method="post">
+					</form>
+					<div id="push"></div>
+				</div>
+			</div>
+	</th:block>
+	<!-- 松浦公彦 -Task.25- -->
 	<script type="text/javascript" th:inline="javascript">
-		$(function() {
+		$(function () {
 			$("#now").text('現在の時刻は　' + getClock() + '　です。');
-			setInterval(function() {
+			setInterval(function () {
 				$("#now").text('現在の時刻は　' + getClock() + '　です。');
 			}, 1000);
 		});
 		function getClock() {
-			const today =  new Date();
+			const today = new Date();
 			const hours = ('0' + today.getHours()).slice(-2);
 			const minutes = ('0' + today.getMinutes()).slice(-2);
 			return hours + ':' + minutes;
@@ -90,7 +163,9 @@
 	</script>
 	<!--js-->
 	<script th:if="${notEnterFlg}">
-	    alert('過去日の勤怠に未入力があります。');
+		alert('過去日の勤怠に未入力があります。');
 	</script>
 </body>
+
+
 </html>

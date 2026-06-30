@@ -50,31 +50,40 @@
 		t2.user_id,
 		t2.user_name,
 		t4.company_name,
+		t6.course_id,
 		t6.course_name,
 		t8.place_name
 		FROM m_lms_user t1
-		INNER JOIN m_user t2
+		INNER JOIN
+		m_user t2
 		ON
-		t1.user_id = t2.user_id
+		t1.user_id =
+		t2.user_id
 		LEFT JOIN t_user_company t3
-		ON t1.lms_user_id =
+		ON
+		t1.lms_user_id =
 		t3.lms_user_id
 		LEFT JOIN m_company t4
-		ON t3.company_id = t4.company_id
+		ON t3.company_id =
+		t4.company_id
 		LEFT JOIN t_course_user t5
-		ON t1.lms_user_id = t5.lms_user_id
+		ON t1.lms_user_id =
+		t5.lms_user_id
 		LEFT JOIN
 		m_course t6
 		ON t5.course_id = t6.course_id
-		LEFT JOIN t_user_place t7
+		LEFT
+		JOIN t_user_place t7
 		ON
 		t1.lms_user_id = t7.lms_user_id
-		LEFT JOIN m_place t8
+		LEFT JOIN m_place
+		t8
 		ON t7.place_id =
 		t8.place_id
 
 		WHERE t1.delete_flg = #{deleteFlg}
-		AND t1.role = '0001'
+		AND
+		t1.role = '0001'
 
 		<if test="courseId != null">
 			AND t6.course_id = #{courseId}
@@ -101,59 +110,77 @@
 		t2.user_id,
 		t2.user_name,
 		t4.company_name,
+		t6.course_id,
 		t6.course_name,
 		t8.place_name AS placeName
 
-		FROM m_lms_user t1
+		FROM m_lms_user
+		t1
 
 		INNER JOIN
 		m_user t2
-		ON t1.user_id = t2.user_id
+		ON t1.user_id =
+		t2.user_id
 
-		INNER JOIN t_user_company t3
+		INNER JOIN
+		t_user_company t3
 		ON
-		t1.lms_user_id = t3.lms_user_id
+		t1.lms_user_id =
+		t3.lms_user_id
 		AND t3.delete_flg = 0
 
 		INNER JOIN
 		m_company t4
-		ON t3.company_id = t4.company_id
-		AND t4.delete_flg = 0
+		ON
+		t3.company_id = t4.company_id
+		AND t4.delete_flg
+		= 0
 
-		INNER JOIN t_course_user t5
+		INNER JOIN
+		t_course_user t5
 		ON t1.lms_user_id = t5.lms_user_id
 		AND
 		t5.delete_flg = 0
 
 		INNER JOIN m_course t6
 		ON t5.course_id = t6.course_id
-		AND t6.delete_flg = 0
+		AND t6.delete_flg
+		= 0
 
 		LEFT JOIN t_user_place t7
 		ON t1.lms_user_id =
 		t7.lms_user_id
-		AND t7.delete_flg = 0
+		AND
+		t7.delete_flg = 0
 
 		LEFT JOIN m_place t8
 		ON t7.place_id
-		= t8.place_id
-		AND t8.delete_flg = 0
+		=
+		t8.place_id
+		AND
+		t8.delete_flg = 0
 
 		WHERE t1.delete_flg = 0
 		AND
-		t3.company_id = #{companyId}
+		t3.company_id =
+		#{companyId}
 
 		<if test="userName != null and userName != ''">
 			AND t2.user_name LIKE CONCAT('%', #{userName}, '%')
 		</if>
 
-		<!-- 経過月検索しない -->
-		<if test="pastFlg == null or pastFlg == 0">
-			AND t6.close_time >= #{limitDate}
-		</if>
+		<!-- ★ここが修正ポイント（勤怠ベース30日制限） -->
+		AND EXISTS (
+		SELECT 1
+		FROM t_student_attendance sa
+		WHERE sa.lms_user_id =
+		t1.lms_user_id
+		AND sa.delete_flg = 0
+		AND sa.training_date >=
+		#{limitDate}
+		)
 
-		ORDER BY
-		t2.user_name
+		ORDER BY t2.user_name
 
 	</select>
 	<select id="getAttendanceStudentListCompanyAll"
@@ -164,17 +191,20 @@
 		t2.user_id,
 		t2.user_name,
 		t4.company_name,
+		t6.course_id,
 		t6.course_name,
 		t8.place_name AS placeName
 
-		FROM m_lms_user t1
+		FROM m_lms_user
+		t1
 
 		INNER JOIN
 		m_user t2
 		ON t1.user_id =
 		t2.user_id
 
-		INNER JOIN t_user_company t3
+		INNER JOIN
+		t_user_company t3
 		ON
 		t1.lms_user_id =
 		t3.lms_user_id
@@ -184,7 +214,8 @@
 		m_company t4
 		ON
 		t3.company_id = t4.company_id
-		AND t4.delete_flg = 0
+		AND t4.delete_flg
+		= 0
 
 		INNER
 		JOIN
@@ -200,15 +231,21 @@
 		= 0
 
 		LEFT JOIN t_user_place t7
-		ON t1.lms_user_id = t7.lms_user_id
-		AND t7.delete_flg = 0
+		ON t1.lms_user_id =
+		t7.lms_user_id
+		AND
+		t7.delete_flg = 0
 
 		LEFT JOIN m_place t8
-		ON t7.place_id = t8.place_id
-		AND t8.delete_flg = 0
+		ON t7.place_id
+		=
+		t8.place_id
+		AND
+		t8.delete_flg = 0
 
 		WHERE t1.delete_flg = 0
-		AND t3.company_id =
+		AND
+		t3.company_id =
 		#{companyId}
 
 		<if test="userName != null and userName != ''">
@@ -221,6 +258,138 @@
 		t2.user_name
 
 	</select>
+	<select id="getAttendanceStudentListAdmin"
+		resultType="jp.co.sss.lms.dto.AttendanceStudentDto">
 
+		SELECT
+		t1.lms_user_id,
+		t2.user_id,
+		t2.user_name,
+		t4.company_name,
+		t6.course_id,
+		t6.course_name,
+		t8.place_name
 
+		FROM m_lms_user t1
+
+		INNER JOIN m_user t2
+		ON t1.user_id = t2.user_id
+
+		LEFT JOIN t_user_company t3
+		ON t1.lms_user_id = t3.lms_user_id
+		AND t3.delete_flg = 0
+
+		LEFT JOIN m_company t4
+		ON t3.company_id = t4.company_id
+		AND t4.delete_flg = 0
+
+		LEFT JOIN t_course_user t5
+		ON t1.lms_user_id = t5.lms_user_id
+		AND t5.delete_flg = 0
+
+		LEFT JOIN m_course t6
+		ON t5.course_id = t6.course_id
+		AND t6.delete_flg = 0
+
+		LEFT JOIN t_user_place t7
+		ON t1.lms_user_id = t7.lms_user_id
+		AND t7.delete_flg = 0
+
+		LEFT JOIN m_place t8
+		ON t7.place_id = t8.place_id
+		AND t8.delete_flg = 0
+
+		WHERE
+		t1.delete_flg = 0
+		AND t1.role = '0001'
+
+		<if test="courseId != null">
+			AND t6.course_id = #{courseId}
+		</if>
+
+		<if test="companyId != null">
+			AND t4.company_id = #{companyId}
+		</if>
+
+		<if test="userName != null and userName != ''">
+			AND t2.user_name LIKE CONCAT('%', #{userName}, '%')
+		</if>
+
+		AND EXISTS (
+		SELECT 1
+		FROM t_student_attendance sa
+		WHERE sa.lms_user_id = t1.lms_user_id
+		AND sa.delete_flg = 0
+		AND sa.training_date >= #{limitDate}
+		)
+
+		ORDER BY
+		t8.place_name,
+		t6.course_name,
+		t2.user_name
+
+	</select>
+	<select id="getAttendanceStudentListAdminAll"
+		resultType="jp.co.sss.lms.dto.AttendanceStudentDto">
+
+		SELECT
+		t1.lms_user_id,
+		t2.user_id,
+		t2.user_name,
+		t4.company_name,
+		t6.course_id,
+		t6.course_name,
+		t8.place_name
+
+		FROM m_lms_user t1
+
+		INNER JOIN m_user t2
+		ON t1.user_id = t2.user_id
+
+		LEFT JOIN t_user_company t3
+		ON t1.lms_user_id = t3.lms_user_id
+		AND t3.delete_flg = 0
+
+		LEFT JOIN m_company t4
+		ON t3.company_id = t4.company_id
+		AND t4.delete_flg = 0
+
+		LEFT JOIN t_course_user t5
+		ON t1.lms_user_id = t5.lms_user_id
+		AND t5.delete_flg = 0
+
+		LEFT JOIN m_course t6
+		ON t5.course_id = t6.course_id
+		AND t6.delete_flg = 0
+
+		LEFT JOIN t_user_place t7
+		ON t1.lms_user_id = t7.lms_user_id
+		AND t7.delete_flg = 0
+
+		LEFT JOIN m_place t8
+		ON t7.place_id = t8.place_id
+		AND t8.delete_flg = 0
+
+		WHERE
+		t1.delete_flg = 0
+		AND t1.role = '0001'
+
+		<if test="courseId != null">
+			AND t6.course_id = #{courseId}
+		</if>
+
+		<if test="companyId != null">
+			AND t4.company_id = #{companyId}
+		</if>
+
+		<if test="userName != null and userName != ''">
+			AND t2.user_name LIKE CONCAT('%', #{userName}, '%')
+		</if>
+
+		ORDER BY
+		t8.place_name,
+		t6.course_name,
+		t2.user_name
+
+	</select>
 </mapper>

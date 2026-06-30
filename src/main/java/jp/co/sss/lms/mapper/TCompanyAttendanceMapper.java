@@ -1,5 +1,6 @@
 package jp.co.sss.lms.mapper;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -21,4 +22,9 @@ public interface TCompanyAttendanceMapper {
 	List<TCompanyAttendance> findByLmsUserId(
 			@Param("lmsUserId") Integer lmsUserId,
 			@Param("deleteFlg") Short deleteFlg);
+
+	TCompanyAttendance findByLmsUserIdAndTrainingDateAndDeleteFlg(
+			Integer lmsUserId,
+			Date trainingDate,
+			Short deleteFlg);
 }

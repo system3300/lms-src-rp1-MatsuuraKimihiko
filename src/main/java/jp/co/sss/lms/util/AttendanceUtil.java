@@ -218,4 +218,5 @@ public class AttendanceUtil {
 		Integer endMinute = Integer.parseInt(timeString.substring(3, 5));
 		return endMinute;
 	}
+
 }

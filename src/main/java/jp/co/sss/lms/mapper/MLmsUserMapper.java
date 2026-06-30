@@ -55,4 +55,15 @@ public interface MLmsUserMapper {
 			@Param("companyId") Integer companyId,
 			@Param("userName") String userName,
 			@Param("pastFlg") Integer pastFlg);
+
+	List<AttendanceStudentDto> getAttendanceStudentListAdmin(
+			@Param("courseId") Integer courseId,
+			@Param("companyId") Integer companyId,
+			@Param("userName") String userName,
+			@Param("limitDate") Date limitDate);
+
+	List<AttendanceStudentDto> getAttendanceStudentListAdminAll(
+			@Param("courseId") Integer courseId,
+			@Param("companyId") Integer companyId,
+			@Param("userName") String userName);
 }

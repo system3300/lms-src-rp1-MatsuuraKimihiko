@@ -322,6 +322,12 @@ public class LoginSessionFilter implements Filter {
 		adminAcessList.add("/lms/illegal");
 		adminAcessList.add("/lms/password/changePassword");
 		adminAcessList.add("/lms/contract/history/list");
+		// 追加
+		adminAcessList.add("/lms/attendance/list");
+		adminAcessList.add("/lms/attendance/detail");
+		adminAcessList.add("/lms/attendance/bulkRegist");
+		adminAcessList.add("/lms/attendance/bulkRegist/search");
+		adminAcessList.add("/lms/attendance/bulkRegist/complete");
 	}
 
 	// 育成担当者権限のアクセス可能URL
